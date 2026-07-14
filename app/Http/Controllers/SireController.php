@@ -5,10 +5,55 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon; 
 
 class SireController extends Controller
 {
-   // Consulta base con todos los JOINs para reutilizar en ambos métodos
+public function indexDashboard()
+    {
+        // 1. Fichas Totales
+        $cantFichas = DB::table('sctnmfich')->count();
+
+        // 2. Movimientos Hoy
+        $hoy = Carbon::now()->format('Y-m-d');
+        $movimientosHoy = DB::table('sctncmovi')
+            ->whereDate('movifecins', $hoy)
+            ->count();
+
+        // 3. Clientes Únicos
+        $cantClientes = DB::table('sctnmusua')->count(); 
+
+        // 4. Libros Activos
+        $cantLibros = DB::table('sctnmlibr')->count();
+
+        // 5. Últimos Movimientos
+        $ultimosMovimientos = DB::table('sctncmovi as mov')
+            ->leftJoin('sctnmacto as act', 'mov.movicodact', '=', 'act.actocodact')
+            ->leftJoin('sctnmlibr as lib', 'mov.movicodlib', '=', 'lib.librcodlib')
+            ->select(
+                'mov.movinumrep as movinumrep', 
+                'mov.movinumins as movinumins', 
+                'mov.movifecins as movifecins',
+                'lib.librnombre as librnombre',
+                'act.actonombre as actonombre'
+            )
+            ->orderBy('mov.movifecins', 'desc')
+            ->limit(5)
+            ->get();
+
+        return view('sire.dashboard', compact(
+            'cantFichas', 
+            'movimientosHoy', 
+            'cantClientes', 
+            'cantLibros', 
+            'ultimosMovimientos'
+        ));
+    }
+
+
+
+
+// Consulta base con todos los JOINs para reutilizar en ambos métodos
     private function getBaseQuery()
 {
     return "

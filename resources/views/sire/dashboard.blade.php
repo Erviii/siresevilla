@@ -41,7 +41,7 @@
         <div class="col-md-3">
             <div class="card card-stat bg-white p-3 d-flex flex-row align-items-center justify-content-between">
                 <div>
-                    <small class="text-muted text-uppercase fw-bold" style="font-size: 0.75rem;">Clientes Únicos</small>
+                    <small class="text-muted text-uppercase fw-bold" style="font-size: 0.75rem;">Usuarios del Sistema</small>
                     <h3 class="fw-bold mb-0 text-dark">{{ $cantClientes ?? 0 }}</h3>
                 </div>
                 <div class="bg-info bg-opacity-10 p-3 rounded text-info fs-3">
