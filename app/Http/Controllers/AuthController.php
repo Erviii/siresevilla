@@ -33,7 +33,7 @@ class AuthController extends Controller
             $request->session()->regenerate();
             
             // Redirigir al sistema principal
-            return redirect()->intended('/sire'); 
+            return redirect()->intended('/dashboard'); 
         }
 
         // Si falla

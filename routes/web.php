@@ -2,6 +2,7 @@
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SireController;
+use App\Http\Controllers\RegistroMovimientoController;
 
 // --- RUTAS DEL SISTEMA SIRE ---
 
@@ -14,6 +15,9 @@ Route::middleware('auth')->group(function () {
     
     // Ruta para cerrar sesión
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+
+Route::get('/dashboard', [SireController::class, 'indexDashboard'])->name('sire.dashboard');
 
 // 1. Mostrar el buscador
 Route::get('/sire', [SireController::class, 'index'])->name('sire.index');
@@ -30,3 +34,17 @@ Route::get('/sire/reporte/ficha/{ficha}', [SireController::class, 'imprimirRepor
 Route::get('/sire/buscar-nombre', [SireController::class, 'buscarNombre'])->name('sire.buscar.nombre');
 
 });
+
+//Route::get('/registrar-movimiento', [RegistroMovimientoController::class, 'indexregistrar'])->name('sire.registrar');
+//Route::get('/movimientos/registrar/{ficha}', [RegistroMovimientoController::class, 'indexregistrar'])->name('sire.registrar');
+
+
+
+//Route::post('/registrar-movimiento', [RegistroMovimientoController::class, 'storeMovimiento'])->name('sire.guardar');
+
+
+    //  SOLUCIÓN: Cambia el orden o haz las URLs distintas
+Route::post('/movimiento/guardar', [RegistroMovimientoController::class, 'storeMovimiento'])->name('sire.storeMovimiento');
+
+// Deja la ruta dinámica abajo, o cámbiale el prefijo
+Route::get('/movimiento/registrar/{fichaNum}', [RegistroMovimientoController::class, 'indexregistrar'])->name('sire.registrar');

@@ -45,13 +45,14 @@ class SireController extends Controller
     ";
 }
 
+
 private function getBaseQueryReporte()
 {
+    // Usamos DISTINCT ON pero añadiendo el Código del Acto (MOVICODACT)
+    // Así evitamos que actos distintos con el mismo número desaparezcan.
     return "
-        SELECT 
-            -- Añadimos ::text a las columnas para que PostgreSQL las trate como cadenas de texto sin dar error
-            STRING_AGG(DISTINCT TRIM(cli.CLIENOMBRE::text) || ' (CI/RUC: ' || TRIM(cli.CLIECEDRUC::text) || ')', '<br>') AS nombre_cliente,
-            
+        SELECT DISTINCT ON (mov.MOVINUMREP, mov.MOVINUMINS, mov.MOVICODACT)
+            cli_agrupados.nombre_cliente,
             ref.REFFNUMFIC AS numero_ficha,
             mov.MOVINUMREP AS num_repertorio,
             mov.MOVINUMINS AS num_inscripcion,
@@ -62,15 +63,21 @@ private function getBaseQueryReporte()
             juz.JUNONOMBRE AS juzgado,
             usu.USUANOMBRE AS usuario,
             mov.MOVIOBSERV AS observacion,
-            fich.FICHLINREG AS linderos  -- <--- AÑADIDO: La columna de linderos
+            fich.FICHLINREG AS linderos
         FROM SCTNCMOVI mov
-        INNER JOIN SCTNDCLMV det ON mov.MOVICODLIB = det.CLMVCODLIB 
-                                 AND mov.MOVINUMREP = det.CLMVNUMREP 
-                                 AND mov.MOVIFECINS = det.CLMVFECINS 
-                                 AND mov.MOVINUMINS = det.CLMVNUMINS
-        INNER JOIN SCTNMCLIE cli ON det.CLMVTIPCLI = cli.CLIETIPCLI 
-                                 AND det.CLMVCEDRUC = cli.CLIECEDRUC 
-                                 AND det.CLMVSECCLI = cli.CLIESECCLI
+        LEFT JOIN (
+            SELECT 
+                det.CLMVCODLIB, det.CLMVNUMREP, det.CLMVFECINS, det.CLMVNUMINS,
+                STRING_AGG(DISTINCT TRIM(cli.CLIENOMBRE::text) || ' (CI/RUC: ' || TRIM(cli.CLIECEDRUC::text) || ')', '<br>') AS nombre_cliente
+            FROM SCTNDCLMV det
+            INNER JOIN SCTNMCLIE cli ON det.CLMVTIPCLI = cli.CLIETIPCLI 
+                                    AND det.CLMVCEDRUC = cli.CLIECEDRUC 
+                                    AND det.CLMVSECCLI = cli.CLIESECCLI
+            GROUP BY det.CLMVCODLIB, det.CLMVNUMREP, det.CLMVFECINS, det.CLMVNUMINS
+        ) AS cli_agrupados ON mov.MOVICODLIB = cli_agrupados.CLMVCODLIB 
+                           AND mov.MOVINUMREP = cli_agrupados.CLMVNUMREP
+                           AND mov.MOVIFECINS = cli_agrupados.CLMVFECINS
+                           AND mov.MOVINUMINS = cli_agrupados.CLMVNUMINS
         LEFT JOIN SCTNDREFF ref ON mov.MOVICODLIB = ref.REFFCODLIB 
                                 AND mov.MOVINUMREP = ref.REFFNUMREP 
                                 AND mov.MOVIFECINS = ref.REFFFECINS 
@@ -80,10 +87,9 @@ private function getBaseQueryReporte()
         LEFT JOIN SCTNMCANT can ON mov.MOVICODCAN = can.CANTCODCAN
         LEFT JOIN SCTNMJUNO juz ON mov.MOVICODJON = juz.JUNOCODJON
         LEFT JOIN SCTNMUSUA usu ON mov.MOVICODUSU = usu.USUACODUSU
-        LEFT JOIN SCTNMFICH fich ON ref.REFFNUMFIC = fich.FICHNUMFIC -- <--- AÑADIDO: Conexión con la tabla de fichas
+        LEFT JOIN SCTNMFICH fich ON ref.REFFNUMFIC = fich.FICHNUMFIC
     ";
 }
-
 
     // 1. Pantalla principal del buscador
     public function index()
@@ -163,67 +169,35 @@ private function getBaseQueryReporte()
 
     }
 
-// 4. Método para generar el PDF por Ficha
-    public function imprimirReporteFicha($ficha)
-    {
-    
+
+public function imprimirReporteFicha($ficha)
+{
     $datosFicha = DB::table('sctnmfich')->where('fichnumfic', $ficha)->first();
     
-    // Aquí concatenamos todo en el orden correcto:
-   // Aquí está la consulta corregida
-   /* $sql = $this->getBaseQueryReporte() . " 
-           WHERE ref.REFFNUMFIC = ? 
-           GROUP BY 
-                ref.REFFNUMFIC, 
-                mov.MOVINUMREP, 
-                mov.MOVINUMINS, 
-                mov.MOVIFECINS, 
-                act.ACTONOMBRE, 
-                lib.LIBRNOMBRE, 
-                can.CANTNOMBRE, 
-                juz.JUNONOMBRE,    -- <--- AGREGADO AQUÍ
-                usu.USUANOMBRE, 
-                mov.MOVIOBSERV 
-           ORDER BY mov.MOVIFECINS ASC";
-  
-    $resultados = DB::select($sql, [$ficha]);*/
+    // ATENCIÓN AQUÍ: 
+    // 1. La subconsulta interna limpia los duplicados agrupando por Rep, Ins y Acto.
+    // 2. La consulta externa (resultado_limpio) ordena todo por fecha del más antiguo al más nuevo.
+    $sql = "SELECT * FROM (" . $this->getBaseQueryReporte() . " 
+                WHERE ref.REFFNUMFIC = ? 
+                ORDER BY mov.MOVINUMREP, mov.MOVINUMINS, mov.MOVICODACT, mov.MOVIFECINS DESC
+            ) AS resultado_limpio
+            ORDER BY resultado_limpio.fecha_inscripcion ASC"; 
+           
+    $resultados = DB::select($sql, [$ficha]);
 
-    $sql = $this->getBaseQueryReporte() . " 
-       WHERE ref.REFFNUMFIC = ? 
-       GROUP BY 
-            ref.REFFNUMFIC, 
-            mov.MOVINUMREP, 
-            mov.MOVINUMINS, 
-            mov.MOVIFECINS, 
-            act.ACTONOMBRE, 
-            lib.LIBRNOMBRE, 
-            can.CANTNOMBRE, 
-            juz.JUNONOMBRE, 
-            usu.USUANOMBRE, 
-            mov.MOVIOBSERV,
-            fich.FICHLINREG   -- <--- AÑADIDO AQUÍ TAMBIÉN PARA EVITAR ERROR
-       ORDER BY mov.MOVIFECINS ASC";
-       
-$resultados = DB::select($sql, [$ficha]);
-
-    // Lógica para crear el resumen de actos
+    // Resumen de actos
     $resumen = collect($resultados)->groupBy('tipo_acto')->map(function ($items) {
         return $items->count();
     });
 
-  /*  $pdf = Pdf::loadView('sire.reporte-ficha', compact('resultados', 'datosFicha', 'ficha', 'resumen'));
-    return $pdf->stream("Reporte_Ficha_{$ficha}.pdf");*/
-
-
-// Descargamos la imagen del código de barras y la convertimos a Base64
+    // Código de barras
     $url_imagen = "https://barcode.tec-it.com/barcode.ashx?data=" . $ficha . "&code=Code128&dpi=96";
     $imagenCodigoBarras = base64_encode(file_get_contents($url_imagen));
 
     $pdf = Pdf::loadView('sire.reporte-ficha', compact('resultados', 'datosFicha', 'ficha', 'resumen', 'imagenCodigoBarras'));
     return $pdf->stream("Reporte_Ficha_{$ficha}.pdf");
+}
 
-
-    }
 
 public function buscarNombre(Request $request)
 {
@@ -274,5 +248,9 @@ public function buscarNombre(Request $request)
                 });
             });
     }
+
+
+
+    
     
 }
