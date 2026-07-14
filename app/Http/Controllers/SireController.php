@@ -217,8 +217,15 @@ private function getBaseQueryReporte()
 
 public function imprimirReporteFicha($ficha)
 {
-    $datosFicha = DB::table('sctnmfich')->where('fichnumfic', $ficha)->first();
-    
+    //$datosFicha = DB::table('sctnmfich')->where('fichnumfic', $ficha)->first();
+    $datosFicha = DB::table('sctnmfich')
+    ->leftJoin('sctnmparr', 'sctnmfich.fichcodpar', '=', 'sctnmparr.parrcodpar')
+    ->select(
+        'sctnmfich.*', 
+        'sctnmparr.parrnombre as canton' // Ajusta 'parrcodcan' si el campo del cantón se llama diferente en minúsculas
+    )
+    ->where('sctnmfich.fichnumfic', $ficha)
+    ->first();
     // ATENCIÓN AQUÍ: 
     // 1. La subconsulta interna limpia los duplicados agrupando por Rep, Ins y Acto.
     // 2. La consulta externa (resultado_limpio) ordena todo por fecha del más antiguo al más nuevo.
@@ -236,10 +243,28 @@ public function imprimirReporteFicha($ficha)
     });
 
     // Código de barras
-    $url_imagen = "https://barcode.tec-it.com/barcode.ashx?data=" . $ficha . "&code=Code128&dpi=96";
-    $imagenCodigoBarras = base64_encode(file_get_contents($url_imagen));
+   /* $url_imagen = "https://barcode.tec-it.com/barcode.ashx?data=" . $ficha . "&code=Code128&dpi=96";
+    $imagenCodigoBarras = base64_encode(file_get_contents($url_imagen));*/
+
+// Generador de Código QR en línea (API gratuita y rápida)
+// Estructuramos un texto claro con saltos de línea (\n)
+$textoQr = "FICHA REGISTRAL\n"
+         . "Nro. Ficha: SDB-" . $ficha . "\n"
+         . "Cód. Catastral: " . ($datosFicha->fichcodigo ?? 'N/A') . "\n"
+         . "Parroquia: " . ($datosFicha->canton ?? 'N/A') . "\n"
+         . "Emisor: Reg. Propiedad Sevilla Don Bosco\n"
+         . "Fecha de Emisión: " . date('d/m/Y');
+
+$url_qr = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" . urlencode($textoQr);
+$imagenCodigoBarras = base64_encode(file_get_contents($url_qr));
+
+
+
 
     $pdf = Pdf::loadView('sire.reporte-ficha', compact('resultados', 'datosFicha', 'ficha', 'resumen', 'imagenCodigoBarras'));
+    // ¡ESTA ES LA LÍNEA CLAVE! Habilitamos el uso de PHP dentro del HTML
+$pdf->setOption('isPhpEnabled', true);
+    
     return $pdf->stream("Reporte_Ficha_{$ficha}.pdf");
 }
 
