@@ -142,12 +142,13 @@
                     <div id="contenedor-intervinientes" class="mb-4">
                         <div class="row g-2 mb-2 align-items-end fila-interviniente">
                             <div class="col-md-3">
+                                
                                 <label class="form-label fw-semibold text-secondary small d-none d-md-block">Rol</label>
                                 <select name="roles[]" class="form-select" required>
-                                    <option value="V">Vendedor / Otorgante (V)</option>
-                                    <option value="C">Comprador / Beneficiario (C)</option>
-                                    <option value="A">Acreedor (A)</option>
-                                    <option value="D">Deudor (D)</option>
+                                     <option value="">Seleccione...</option>
+                                @foreach($rolcliente as $rol)
+                                    <option value="{{ $rol->papecodtip }}">{{ $rol->papenombre }}</option>
+                                @endforeach
                                 </select>
                             </div>
                             <div class="col-md-3">
@@ -173,6 +174,11 @@
                         <a href="{{ route('sire.dashboard') }}" class="btn btn-light border px-4">
                             <i class="bi bi-x-circle me-2"></i>Cancelar
                         </a>
+
+                        <button type="button" id="btnPreview" class="btn btn-info mr-2">
+            <i class="fas fa-eye"></i> Vista Previa
+        </button>
+
                         <button type="submit" class="btn btn-primary px-4 shadow-sm">
                             <i class="bi bi-save me-2"></i>Guardar Movimiento
                         </button>
@@ -183,6 +189,38 @@
 
     </div>
 </div>
+
+
+<!-- Modal o Contenedor de Previsualización -->
+<div id="modalPreview" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Vista Previa del Movimiento</h5>
+            </div>
+            <div class="modal-body">
+                <div class="preview-header bg-light p-2 mb-3">
+                    <strong>INS: N° <span id="prev_ins"></span></strong> | 
+                    <strong>REP: N° <span id="prev_rep"></span></strong> | 
+                    <strong>FECHA: <span id="prev_fec"></span></strong>
+                </div>
+
+                <div class="mov-row">
+                    <div class="mov-label"><strong>Intervinientes:</strong></div>
+                    <div class="mov-data" id="prev_intervinientes">
+                        <!-- Aquí se inyectará el HTML cargado desde el controlador -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Corregir / Editar</button>
+                <button type="button" id="btnConfirmarGuardar" class="btn btn-success">Guardar Definitivemente</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 @endsection
 
 @push('scripts')
@@ -223,5 +261,43 @@
             alert("Debe registrar al menos un interviniente para el movimiento.");
         }
     }
+
+
+$('#btnPreview').on('click', function(e) {
+    e.preventDefault();
+
+    // Recogemos los datos del formulario
+    let formData = $('#formMovimiento').serialize();
+
+    $.ajax({
+        url: '/movimientos/preview', // Tu ruta del controlador
+        type: 'POST',
+        data: formData,
+        success: function(response) {
+            // Inyectamos la información en la Modal
+            $('#prev_rep').text(response.num_repertorio);
+            $('#prev_ins').text(response.num_inscripcion);
+            $('#prev_fec').text(response.fecha_inscripcion);
+            
+            // Inyectamos la tabla HTML exactamente construida
+            $('#prev_intervinientes').html(response.html_intervinientes);
+
+            // Mostramos la modal
+            $('#modalPreview').modal('show');
+        },
+        error: function(xhr) {
+            alert('Error en los datos cargados. Por favor verifica los campos.');
+        }
+    });
+});
+
+// Cuando confirma en la Modal, ejecuta el Guardado Real
+$('#btnConfirmarGuardar').on('click', function() {
+    $('#modalPreview').modal('hide');
+    $('#formMovimiento').submit(); // Envía al store original en base de datos
+});
+
+
+
 </script>
 @endpush

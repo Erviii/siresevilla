@@ -91,7 +91,7 @@ public function indexDashboard()
 }
 
 
-private function getBaseQueryReporte()
+/*private function getBaseQueryReporte()
 {
     // Usamos DISTINCT ON pero añadiendo el Código del Acto (MOVICODACT)
     // Así evitamos que actos distintos con el mismo número desaparezcan.
@@ -118,6 +118,182 @@ private function getBaseQueryReporte()
             INNER JOIN SCTNMCLIE cli ON det.CLMVTIPCLI = cli.CLIETIPCLI 
                                     AND det.CLMVCEDRUC = cli.CLIECEDRUC 
                                     AND det.CLMVSECCLI = cli.CLIESECCLI
+            GROUP BY det.CLMVCODLIB, det.CLMVNUMREP, det.CLMVFECINS, det.CLMVNUMINS
+        ) AS cli_agrupados ON mov.MOVICODLIB = cli_agrupados.CLMVCODLIB 
+                           AND mov.MOVINUMREP = cli_agrupados.CLMVNUMREP
+                           AND mov.MOVIFECINS = cli_agrupados.CLMVFECINS
+                           AND mov.MOVINUMINS = cli_agrupados.CLMVNUMINS
+        LEFT JOIN SCTNDREFF ref ON mov.MOVICODLIB = ref.REFFCODLIB 
+                                AND mov.MOVINUMREP = ref.REFFNUMREP 
+                                AND mov.MOVIFECINS = ref.REFFFECINS 
+                                AND mov.MOVINUMINS = ref.REFFNUMINS
+        LEFT JOIN SCTNMACTO act ON mov.MOVICODACT = act.ACTOCODACT
+        LEFT JOIN SCTNMLIBR lib ON mov.MOVICODLIB = lib.LIBRCODLIB
+        LEFT JOIN SCTNMCANT can ON mov.MOVICODCAN = can.CANTCODCAN
+        LEFT JOIN SCTNMJUNO juz ON mov.MOVICODJON = juz.JUNOCODJON
+        LEFT JOIN SCTNMUSUA usu ON mov.MOVICODUSU = usu.USUACODUSU
+        LEFT JOIN SCTNMFICH fich ON ref.REFFNUMFIC = fich.FICHNUMFIC
+    ";
+}*/
+
+/*private function getBaseQueryReporte()
+{
+    // Usamos DISTINCT ON pero añadiendo el Código del Acto (MOVICODACT)
+    // Así evitamos que actos distintos con el mismo número desaparezcan.
+    return "
+        SELECT DISTINCT ON (mov.MOVINUMREP, mov.MOVINUMINS, mov.MOVICODACT)
+            cli_agrupados.nombre_cliente,
+            ref.REFFNUMFIC AS numero_ficha,
+            mov.MOVINUMREP AS num_repertorio,
+            mov.MOVINUMINS AS num_inscripcion,
+            mov.MOVIFECINS AS fecha_inscripcion,
+            act.ACTONOMBRE AS tipo_acto,
+            lib.LIBRNOMBRE AS libro,
+            can.CANTNOMBRE AS canton,
+            juz.JUNONOMBRE AS juzgado,
+            usu.USUANOMBRE AS usuario,
+            mov.MOVIOBSERV AS observacion,
+            fich.FICHLINREG AS linderos
+        FROM SCTNCMOVI mov
+        LEFT JOIN (
+            SELECT 
+                det.CLMVCODLIB, det.CLMVNUMREP, det.CLMVFECINS, det.CLMVNUMINS,
+            STRING_AGG(
+    DISTINCT '<b>' || TRIM(pap.PAPENOMBRE::text) || ':</b> ' || 
+    TRIM(cli.CLIENOMBRE::text) || ' <b>C.I/RUC:</b> ' || 
+    TRIM(cli.CLIECEDRUC::text) || ' <b>EST. CIVIL:</b> ' || 
+    CASE TRIM(det.CLMVESTCIV::text)
+        WHEN 'SO' THEN 'SOLTERO/A'
+        WHEN 'CA' THEN 'CASADO/A'
+        WHEN 'DI' THEN 'DIVORCIADO/A'
+        WHEN 'VI' THEN 'VIUDO/A'
+        WHEN 'CE' THEN 'UNIÓN DE HECHO'
+        WHEN 'NI' THEN ''
+        ELSE COALESCE(TRIM(det.CLMVESTCIV::text), 'N/A')
+    END, 
+    '<br>')AS nombre_cliente
+            FROM SCTNDCLMV det
+            INNER JOIN SCTNMCLIE cli ON det.CLMVTIPCLI = cli.CLIETIPCLI 
+                                    AND det.CLMVCEDRUC = cli.CLIECEDRUC 
+                                    AND det.CLMVSECCLI = cli.CLIESECCLI
+            INNER JOIN SCTNMPAPE pap ON det.CLMVCODTIP = pap.PAPECODTIP
+            GROUP BY det.CLMVCODLIB, det.CLMVNUMREP, det.CLMVFECINS, det.CLMVNUMINS
+        ) AS cli_agrupados ON mov.MOVICODLIB = cli_agrupados.CLMVCODLIB 
+                           AND mov.MOVINUMREP = cli_agrupados.CLMVNUMREP
+                           AND mov.MOVIFECINS = cli_agrupados.CLMVFECINS
+                           AND mov.MOVINUMINS = cli_agrupados.CLMVNUMINS
+        LEFT JOIN SCTNDREFF ref ON mov.MOVICODLIB = ref.REFFCODLIB 
+                                AND mov.MOVINUMREP = ref.REFFNUMREP 
+                                AND mov.MOVIFECINS = ref.REFFFECINS 
+                                AND mov.MOVINUMINS = ref.REFFNUMINS
+        LEFT JOIN SCTNMACTO act ON mov.MOVICODACT = act.ACTOCODACT
+        LEFT JOIN SCTNMLIBR lib ON mov.MOVICODLIB = lib.LIBRCODLIB
+        LEFT JOIN SCTNMCANT can ON mov.MOVICODCAN = can.CANTCODCAN
+        LEFT JOIN SCTNMJUNO juz ON mov.MOVICODJON = juz.JUNOCODJON
+        LEFT JOIN SCTNMUSUA usu ON mov.MOVICODUSU = usu.USUACODUSU
+        LEFT JOIN SCTNMFICH fich ON ref.REFFNUMFIC = fich.FICHNUMFIC
+    ";
+}*/
+
+
+/*private function getBaseQueryReporte()
+{
+    return "
+        SELECT DISTINCT ON (mov.MOVINUMREP, mov.MOVINUMINS, mov.MOVICODACT)
+            cli_agrupados.nombre_cliente,
+            ref.REFFNUMFIC AS numero_ficha,
+            mov.MOVINUMREP AS num_repertorio,
+            mov.MOVINUMINS AS num_inscripcion,
+            mov.MOVIFECINS AS fecha_inscripcion,
+            act.ACTONOMBRE AS tipo_acto,
+            lib.LIBRNOMBRE AS libro,
+            can.CANTNOMBRE AS canton,
+            juz.JUNONOMBRE AS juzgado,
+            usu.USUANOMBRE AS usuario,
+            mov.MOVIOBSERV AS observacion,
+            fich.FICHLINREG AS linderos
+        FROM SCTNCMOVI mov
+        LEFT JOIN (
+            SELECT 
+                det.CLMVCODLIB, det.CLMVNUMREP, det.CLMVFECINS, det.CLMVNUMINS,
+                STRING_AGG(
+                    DISTINCT 
+                    TRIM(pap.PAPENOMBRE::text) || '|' ||
+                    TRIM(cli.CLIENOMBRE::text) || '|' ||
+                    TRIM(cli.CLIECEDRUC::text) || '|' ||
+                    CASE TRIM(det.CLMVESTCIV::text)
+                        WHEN 'S' THEN 'SOLTERO/A'
+                        WHEN 'C' THEN 'CASADO/A'
+                        WHEN 'D' THEN 'DIVORCIADO/A'
+                        WHEN 'V' THEN 'VIUDO/A'
+                        WHEN 'U' THEN 'UNIÓN DE HECHO'
+                        ELSE COALESCE(TRIM(det.CLMVESTCIV::text), 'N/A')
+                    END,
+                    '--'
+                ) AS nombre_cliente
+            FROM SCTNDCLMV det
+            INNER JOIN SCTNMCLIE cli ON det.CLMVTIPCLI = cli.CLIETIPCLI 
+                                    AND det.CLMVCEDRUC = cli.CLIECEDRUC 
+                                    AND det.CLMVSECCLI = cli.CLIESECCLI
+            INNER JOIN SCTNMPAPE pap ON det.CLMVCODTIP = pap.PAPECODTIP
+            GROUP BY det.CLMVCODLIB, det.CLMVNUMREP, det.CLMVFECINS, det.CLMVNUMINS
+        ) AS cli_agrupados ON mov.MOVICODLIB = cli_agrupados.CLMVCODLIB 
+                           AND mov.MOVINUMREP = cli_agrupados.CLMVNUMREP
+                           AND mov.MOVIFECINS = cli_agrupados.CLMVFECINS
+                           AND mov.MOVINUMINS = cli_agrupados.CLMVNUMINS
+        LEFT JOIN SCTNDREFF ref ON mov.MOVICODLIB = ref.REFFCODLIB 
+                                AND mov.MOVINUMREP = ref.REFFNUMREP 
+                                AND mov.MOVIFECINS = ref.REFFFECINS 
+                                AND mov.MOVINUMINS = ref.REFFNUMINS
+        LEFT JOIN SCTNMACTO act ON mov.MOVICODACT = act.ACTOCODACT
+        LEFT JOIN SCTNMLIBR lib ON mov.MOVICODLIB = lib.LIBRCODLIB
+        LEFT JOIN SCTNMCANT can ON mov.MOVICODCAN = can.CANTCODCAN
+        LEFT JOIN SCTNMJUNO juz ON mov.MOVICODJON = juz.JUNOCODJON
+        LEFT JOIN SCTNMUSUA usu ON mov.MOVICODUSU = usu.USUACODUSU
+        LEFT JOIN SCTNMFICH fich ON ref.REFFNUMFIC = fich.FICHNUMFIC
+    ";
+}*/
+
+private function getBaseQueryReporte()
+{
+    return "
+        SELECT DISTINCT ON (mov.MOVINUMREP, mov.MOVINUMINS, mov.MOVICODACT)
+            cli_agrupados.clientes_json,
+            ref.REFFNUMFIC AS numero_ficha,
+            mov.MOVINUMREP AS num_repertorio,
+            mov.MOVINUMINS AS num_inscripcion,
+            mov.MOVIFECINS AS fecha_inscripcion,
+            act.ACTONOMBRE AS tipo_acto,
+            lib.LIBRNOMBRE AS libro,
+            can.CANTNOMBRE AS canton,
+            juz.JUNONOMBRE AS juzgado,
+            usu.USUANOMBRE AS usuario,
+            mov.MOVIOBSERV AS observacion,
+            fich.FICHLINREG AS linderos
+        FROM SCTNCMOVI mov
+        LEFT JOIN (
+            SELECT 
+                det.CLMVCODLIB, det.CLMVNUMREP, det.CLMVFECINS, det.CLMVNUMINS,
+                JSON_AGG(
+                    JSON_BUILD_OBJECT(
+                        'papel', TRIM(pap.PAPENOMBRE::text),
+                        'nombre', TRIM(cli.CLIENOMBRE::text),
+                        'cedula', TRIM(cli.CLIECEDRUC::text),
+                        'est_civil', CASE TRIM(det.CLMVESTCIV::text)
+                            WHEN 'S' THEN 'SOLTERO/A'
+                            WHEN 'C' THEN 'CASADO/A'
+                            WHEN 'D' THEN 'DIVORCIADO/A'
+                            WHEN 'V' THEN 'VIUDO/A'
+                            WHEN 'U' THEN 'UNIÓN DE HECHO'
+                            ELSE COALESCE(TRIM(det.CLMVESTCIV::text), 'N/A')
+                        END
+                    )
+                ) AS clientes_json
+            FROM SCTNDCLMV det
+            INNER JOIN SCTNMCLIE cli ON det.CLMVTIPCLI = cli.CLIETIPCLI 
+                                    AND det.CLMVCEDRUC = cli.CLIECEDRUC 
+                                    AND det.CLMVSECCLI = cli.CLIESECCLI
+            INNER JOIN SCTNMPAPE pap ON det.CLMVCODTIP = pap.PAPECODTIP
             GROUP BY det.CLMVCODLIB, det.CLMVNUMREP, det.CLMVFECINS, det.CLMVNUMINS
         ) AS cli_agrupados ON mov.MOVICODLIB = cli_agrupados.CLMVCODLIB 
                            AND mov.MOVINUMREP = cli_agrupados.CLMVNUMREP

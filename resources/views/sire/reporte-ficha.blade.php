@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <style>
         /* Ajustamos el margen superior a 3.5cm para dar espacio al encabezado fijo repetible */
-        @page { margin: 3.5cm 1.5cm 2cm 1.5cm; }
-        body { font-family: sans-serif; font-size: 11px; line-height: 1.4; }
+        @page { margin: 3.0cm 1.5cm 2cm 1.5cm; }
+        body { font-family: sans-serif; font-size: 10px; line-height: 1.4; }
         
         /* ------------------------------------------------------------------
            ESTILOS DEL ENCABEZADO (REPETIBLE EN CADA PÁGINA)
@@ -169,6 +169,51 @@
         .col-value {
             width: 30%;              
         }   
+
+
+
+.tabla-intervinientes {
+    width: 100%;
+    max-width: 100%;
+    border-collapse: collapse;
+    border: none;
+    table-layout: auto;
+}
+
+.tabla-intervinientes td {
+    padding: 2px 10px 2px 0;
+    vertical-align: top;
+    border: none;
+}
+
+/* 1. Rol: Se ajusta al texto más largo pero no se rompe */
+.tabla-intervinientes .col-papel {
+    font-weight: bold;
+    white-space: nowrap;
+    width: 1%;
+}
+
+/* 2. Nombre: Toma todo el espacio disponible y salta de línea si es muy largo */
+.tabla-intervinientes .col-nombre {
+    white-space: normal;
+    word-wrap: break-word;
+    /* width se omite o queda en auto para absorber el espacio sobrante */
+}
+
+/* 3. Cédula: Pegada al nombre de forma simétrica */
+.tabla-intervinientes .col-cedula {
+    white-space: nowrap;
+    width: 1%;
+    padding-left: 8px;
+}
+
+/* 4. Estado Civil: Ancho exacto al final */
+.tabla-intervinientes .col-est-civil {
+    white-space: nowrap;
+    width: 1%;
+    padding-left: 8px;
+}
+
     </style>
 </head>
 <body>
@@ -181,7 +226,7 @@
                 </td>
                 
                 <td style="width: 56%; vertical-align: middle; text-align: center; padding: 0 5px;">
-                    <h1 style="margin: 0; font-size: 13px; font-weight: bold; line-height: 1.2; text-transform: uppercase;">
+                    <h1 style="margin: 0; font-size: 14px; font-weight: bold; line-height: 1.2; text-transform: uppercase;">
                         Registro de la Propiedad del Cantón Sevilla Don Bosco
                     </h1>
                     <p style="margin: 3px 0; font-size: 9px; color: #444;">
@@ -267,12 +312,39 @@
         <div class="mov-content" style="page-break-inside: auto !important;">
             
             <div class="mov-row">
-                <div class="mov-label">Intervinientes:</div>
+    <div class="mov-label">Intervinientes:</div>
+    <div class="mov-data">
+        @if(!empty($fila->clientes_json))
+            <table class="tabla-intervinientes">
+                @foreach(json_decode($fila->clientes_json) as $cliente)
+                    <tr>
+                        <td class="col-papel"><b>{{ $cliente->papel }}:</b></td>
+                        <td class="col-nombre">{{ $cliente->nombre }}</td>
+                        <td class="col-cedula"><b>C.I/RUC:</b> {{ $cliente->cedula }}</td>
+                        <td class="col-est-civil"><b>EST. CIVIL:</b> {{ $cliente->est_civil }}</td>
+                    </tr>
+                @endforeach
+            </table>
+        @endif
+    </div>
+    <div class="clearfix"></div>
+</div>
+            
+            <div class="mov-row">
+                <div class="mov-label">Oficina donde se guarda el Original:</div>
                 <div class="mov-data">
-                    {!! $fila->nombre_cliente !!}
+                    {!! $fila->juzgado !!}
+                </div>
+                  <div class="clearfix"></div>
+            </div>
+            <div class="mov-row">
+                <div class="mov-label">Canton:</div>
+                <div class="mov-data">
+                    {!! $fila->canton !!}
                 </div>
                 <div class="clearfix"></div>
             </div>
+           
 
             @if(!empty($fila->observacion))
             <div class="mov-row">
@@ -347,9 +419,9 @@
         </div>
         
         <div class="sig-box">
-            <strong>Abg. Jair Alexander Ojeda Bueno</strong><br>
-            <span style="font-size: 10px; color: #333;">EL REGISTRADOR DE LA PROPIEDAD Y MERCANTIL</span><br>
-            <span style="font-size: 9px; color: #555;">Firma y Sello</span>
+            Abg. Jair Alexander Ojeda Bueno<br>
+            <span style="font-size: 10px; color: #333;"><strong>EL REGISTRADOR DE LA PROPIEDAD Y MERCANTIL</strong></span><br>
+            <span style="font-size: 9px; color: #555;"><strong>Firma y Sello</strong></span>
         </div>
         
     </div>

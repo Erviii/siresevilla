@@ -30,8 +30,12 @@ public function indexregistrar($fichaNum)
             $actos = DB::table('sctnmacto')->orderBy('actonombre', 'asc')->get();
             $cantones = DB::table('sctnmcant')->orderBy('cantnombre', 'asc')->get();
             $juzgados = DB::table('sctnmjuno')->orderBy('junonombre', 'asc')->get();
+            //SCTNMPAPE
+            $rolcliente = DB::table('sctnmpape')->orderBy('papenombre', 'asc')->get();
 
-            return view('sire.registrar_mov_ficha', compact('ficha', 'libros', 'actos', 'cantones', 'juzgados'));
+
+
+            return view('sire.registrar_mov_ficha', compact('ficha', 'libros', 'actos', 'cantones', 'juzgados','rolcliente'));
 
 
     }
@@ -99,7 +103,7 @@ public function storeMovimiento(Request $request)
 
             if (!$clienteExiste) {
                 DB::table('sctnmclie')->insert([
-                    'clietipcli' => $tipoCli,
+                    'clietipcli' => 'S',
                     'cliecedruc' => $cedula,
                     'clieseccli' => $secuencial,
                     'clienombre' => mb_strtoupper($nombre),
@@ -112,12 +116,68 @@ public function storeMovimiento(Request $request)
                 'clmvnumrep' => $request->num_rep,
                 'clmvfecins' => $fechaInscripcion,
                 'clmvnumins' => $request->num_ins,
-                'clmvtipcli' => $tipoCli,
+                'clmvtipcli' => 'S',
                 'clmvcedruc' => $cedula,
                 'clmvseccli' => $secuencial,
+                'clmvcodtip' => $tipoCli,
             ]);
         }
     });
     return redirect()->back()->with('success', 'Movimiento e intervinientes registrados correctamente');
 }
+public function preview(Request $request)
+{
+    // 1. Validamos los campos antes de procesar
+    $request->validate([
+        'clmvcodlib' => 'required',
+        'clmvnumrep' => 'required',
+        'intervinientes' => 'required|array',
+    ]);
+
+    // 2. Mapeo de estados civiles para la vista previa
+    $estadosCiviles = [
+        'S' => 'SOLTERO/A',
+        'C' => 'CASADO/A',
+        'CA' => 'CASADO/A', // Mapeamos por si envían 'CA'
+        'D' => 'DIVORCIADO/A',
+        'V' => 'VIUDO/A',
+        'U' => 'UNIÓN DE HECHO',
+    ];
+
+    // 3. Simulamos la estructura que generaría PostgreSQL
+    $filasHtml = '';
+    
+    foreach ($request->intervinientes as $item) {
+        // Consultamos solo los nombres para la previsualización
+        $papel = DB::table('sctnmpape')->where('papecodtip', $item['codtip'])->value('papenombre');
+        $cliente = DB::table('sctnmclie')
+            ->where('clietipcli', $item['tipcli'])
+            ->where('cliecedruc', $item['cedruc'])
+            ->first();
+
+        $estCivilTexto = $estadosCiviles[$item['estciv']] ?? 'N/A';
+
+        $filasHtml .= "<tr>
+            <td class='col-papel'>" . trim($papel) . ":</td>
+            <td class='col-nombre'>" . trim($cliente->clienombre ?? 'NO ENCONTRADO') . "</td>
+            <td class='col-cedula'><b>C.I/RUC:</b> " . trim($item['cedruc']) . "</td>
+            <td class='col-est-civil'><b>EST. CIVIL:</b> " . $estCivilTexto . "</td>
+        </tr>";
+    }
+
+    $tablaHtml = "<table class='tabla-intervinientes'>{$filasHtml}</table>";
+
+    // 4. Retornamos el HTML maquetado exactamente igual al reporte final
+    return response()->json([
+        'status' => 'success',
+        'html_intervinientes' => $tablaHtml,
+        'num_repertorio' => $request->clmvnumrep,
+        'num_inscripcion' => $request->clmvnumins,
+        'fecha_inscripcion' => $request->clmvfecins,
+        'observacion' => $request->clmvobserv,
+    ]);
+}
+
+
+
 }

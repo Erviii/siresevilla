@@ -46,5 +46,7 @@ Route::get('/sire/buscar-nombre', [SireController::class, 'buscarNombre'])->name
     //  SOLUCIÓN: Cambia el orden o haz las URLs distintas
 Route::post('/movimiento/guardar', [RegistroMovimientoController::class, 'storeMovimiento'])->name('sire.storeMovimiento');
 
+Route::post('/movimientos/preview', [RegistroMovimientoController::class, 'preview'])->name('movimientos.preview');
+
 // Deja la ruta dinámica abajo, o cámbiale el prefijo
 Route::get('/movimiento/registrar/{fichaNum}', [RegistroMovimientoController::class, 'indexregistrar'])->name('sire.registrar');
