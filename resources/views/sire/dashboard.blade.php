@@ -140,15 +140,25 @@
                         </div>
                     </a>
 
-                    <a href="#" class="btn btn-white btn-action p-3 text-start d-flex align-items-center rounded shadow-sm text-decoration-none">
+                    <a href="{{ route('configuracion.index') }}" class="btn btn-white btn-action p-3 text-start d-flex align-items-center rounded shadow-sm text-decoration-none">
                         <div class="bg-dark bg-opacity-10 p-2 rounded text-dark me-3">
                             <i class="bi bi-gear fs-4"></i>
                         </div>
                         <div>
                             <div class="fw-bold text-dark">Configuración</div>
-                            <small class="text-muted d-block" style="font-size: 0.75rem;">Administración de libros y catálogos</small>
+                            <small class="text-muted d-block" style="font-size: 0.75rem;">Configuracion del Sistema</small>
                         </div>
                     </a>
+
+                   <a href="{{ route('ordenes-pago.index') }}" class="btn bg-white border border-primary-subtle border-2 btn-action p-3 text-start d-flex align-items-center rounded-3 shadow-sm text-decoration-none">
+    <div class="bg-primary text-white p-3 rounded-3 me-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 48px; height: 48px;">
+        <i class="bi bi-receipt-cutoff fs-3"></i>
+    </div>
+    <div>
+        <div class="fw-bold text-dark fs-6 mb-0">Órdenes de Pago</div>
+        <small class="text-primary fw-semibold d-block" style="font-size: 0.78rem;">Solicitudes y Liquidación de Aranceles</small>
+    </div>
+</a>
                 </div>
             </div>
         </div>

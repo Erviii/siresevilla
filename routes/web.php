@@ -3,12 +3,15 @@ use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SireController;
 use App\Http\Controllers\RegistroMovimientoController;
+use App\Http\Controllers\ConfiguracionController;
+use App\Http\Controllers\OrdenPagoController;
 
 // --- RUTAS DEL SISTEMA SIRE ---
 
 // Rutas de Login (Públicas)
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+Route::get('/consultar-tramite', [OrdenPagoController::class, 'consultarEstado'])->name('ordenes-pago.consulta-publica');
 
 
 Route::middleware('auth')->group(function () {
@@ -32,6 +35,27 @@ Route::get('/sire/buscar/ficha', [SireController::class, 'buscarPorFicha'])->nam
 Route::get('/sire/reporte/ficha/{ficha}', [SireController::class, 'imprimirReporteFicha'])->name('sire.imprimir.ficha');
 
 Route::get('/sire/buscar-nombre', [SireController::class, 'buscarNombre'])->name('sire.buscar.nombre');
+
+
+    Route::get('/configuracion', [ConfiguracionController::class, 'index'])->name('configuracion.index');
+    Route::post('/configuracion/general', [ConfiguracionController::class, 'updateGeneral'])->name('configuracion.updateGeneral');
+    Route::post('/configuracion/registrador', [ConfiguracionController::class, 'cambiarRegistrador'])->name('configuracion.cambiarRegistrador');
+
+
+    
+    // Ruta AJAX para el cálculo de aranceles
+    Route::get('/ordenes-pago/calcular-ajax', [OrdenPagoController::class, 'calcularAjax'])->name('ordenes-pago.calcularAjax');
+    
+    // Ruta PUT para registrar la factura de Tesorería desde el Modal
+    Route::put('/ordenes-pago/{id}/factura', [OrdenPagoController::class, 'registrarFactura'])->name('ordenes-pago.registrarFactura');
+    
+    // Rutas Resource estándar (index, create, store, show, edit, update, destroy)
+    Route::resource('ordenes-pago', OrdenPagoController::class);
+
+    Route::put('/ordenes-pago/{id}/devolver', [OrdenPagoController::class, 'devolverTramite'])->name('ordenes-pago.devolver');
+
+// Ruta para cambiar el estado de la orden
+    Route::put('/ordenes-pago/{id}/estado', [OrdenPagoController::class, 'cambiarEstado'])->name('ordenes-pago.cambiarEstado');
 
 });
 

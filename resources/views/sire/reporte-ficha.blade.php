@@ -230,7 +230,7 @@
                         Registro de la Propiedad del Cantón Sevilla Don Bosco
                     </h1>
                     <p style="margin: 3px 0; font-size: 9px; color: #444;">
-                        Macas, calle 24 de Mayo y Domingo Comín
+                        Sevilla Don Bosco, frente al Parque Ex Junta Parroquial
                     </p>
                     <h2 style="margin: 5px 0 0 0; font-size: 11px; color: #000; font-weight: bold;">
                         Ficha Registral - Bien Inmueble N°: SDB-{{$ficha}}
@@ -419,7 +419,7 @@
         </div>
         
         <div class="sig-box">
-            Abg. Jair Alexander Ojeda Bueno<br>
+            Abg. Mayra katherine Gallardo Vallejo<br>
             <span style="font-size: 10px; color: #333;"><strong>EL REGISTRADOR DE LA PROPIEDAD Y MERCANTIL</strong></span><br>
             <span style="font-size: 9px; color: #555;"><strong>Firma y Sello</strong></span>
         </div>
