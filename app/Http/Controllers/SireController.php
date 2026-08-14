@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\Configuracion;
+use App\Models\HistorialRegistrador;
 use Carbon\Carbon; 
 
 class SireController extends Controller
@@ -393,6 +395,16 @@ private function getBaseQueryReporte()
 
 public function imprimirReporteFicha($ficha)
 {
+    
+    // tbala de configuraciones
+
+    // 2. Obtener el Registrador Actual
+    $registradorActual = HistorialRegistrador::where('es_actual', true)->first();
+
+    // 3. Obtener la Configuración del Registro
+    $configuracion = DB::table('configuraciones')->first();
+
+
     //$datosFicha = DB::table('sctnmfich')->where('fichnumfic', $ficha)->first();
     $datosFicha = DB::table('sctnmfich')
     ->leftJoin('sctnmparr', 'sctnmfich.fichcodpar', '=', 'sctnmparr.parrcodpar')
@@ -418,12 +430,6 @@ public function imprimirReporteFicha($ficha)
         return $items->count();
     });
 
-    // Código de barras
-   /* $url_imagen = "https://barcode.tec-it.com/barcode.ashx?data=" . $ficha . "&code=Code128&dpi=96";
-    $imagenCodigoBarras = base64_encode(file_get_contents($url_imagen));*/
-
-// Generador de Código QR en línea (API gratuita y rápida)
-// Estructuramos un texto claro con saltos de línea (\n)
 $textoQr = "FICHA REGISTRAL\n"
          . "Nro. Ficha: SDB-" . $ficha . "\n"
          . "Cód. Catastral: " . ($datosFicha->fichcodigo ?? 'N/A') . "\n"
@@ -437,7 +443,7 @@ $imagenCodigoBarras = base64_encode(file_get_contents($url_qr));
 
 
 
-    $pdf = Pdf::loadView('sire.reporte-ficha', compact('resultados', 'datosFicha', 'ficha', 'resumen', 'imagenCodigoBarras'));
+    $pdf = Pdf::loadView('sire.reporte-ficha', compact('resultados', 'datosFicha', 'ficha', 'resumen', 'imagenCodigoBarras', 'registradorActual', 'configuracion'));
     // ¡ESTA ES LA LÍNEA CLAVE! Habilitamos el uso de PHP dentro del HTML
 $pdf->setOption('isPhpEnabled', true);
     

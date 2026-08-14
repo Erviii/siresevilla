@@ -127,54 +127,57 @@ public function storeMovimiento(Request $request)
 }
 public function preview(Request $request)
 {
-    // 1. Validamos los campos antes de procesar
+    // 1. Validación de campos
     $request->validate([
-        'clmvcodlib' => 'required',
-        'clmvnumrep' => 'required',
-        'intervinientes' => 'required|array',
+        'cod_lib'      => 'required',
+        'num_rep'      => 'required',
+        'num_ins'      => 'required',
+        'fec_ins'      => 'required|date',
+        'cod_acto'     => 'required',
+        'roles'        => 'required|array',
+        'cedulas'      => 'required|array',
+        'nombres'      => 'required|array',
     ]);
 
-    // 2. Mapeo de estados civiles para la vista previa
-    $estadosCiviles = [
-        'S' => 'SOLTERO/A',
-        'C' => 'CASADO/A',
-        'CA' => 'CASADO/A', // Mapeamos por si envían 'CA'
-        'D' => 'DIVORCIADO/A',
-        'V' => 'VIUDO/A',
-        'U' => 'UNIÓN DE HECHO',
-    ];
+    // 2. Consultar el nombre del Tipo de Acto
+    $nombreActo = DB::table('sctnmacto') // Ajusta el nombre de la tabla si difiere
+        ->where('actocodact', $request->input('cod_acto'))
+        ->value('actonombre');
 
-    // 3. Simulamos la estructura que generaría PostgreSQL
+    // 3. Mapeo de intervinientes
+    $roles = $request->input('roles', []);
+    $cedulas = $request->input('cedulas', []);
+    $nombres = $request->input('nombres', []);
+
     $filasHtml = '';
-    
-    foreach ($request->intervinientes as $item) {
-        // Consultamos solo los nombres para la previsualización
-        $papel = DB::table('sctnmpape')->where('papecodtip', $item['codtip'])->value('papenombre');
-        $cliente = DB::table('sctnmclie')
-            ->where('clietipcli', $item['tipcli'])
-            ->where('cliecedruc', $item['cedruc'])
-            ->first();
+    foreach ($roles as $index => $codTip) {
+        $cedula = $cedulas[$index] ?? '';
+        $nombre = $nombres[$index] ?? '';
 
-        $estCivilTexto = $estadosCiviles[$item['estciv']] ?? 'N/A';
+        $papelNombre = DB::table('sctnmpape')
+            ->where('papecodtip', $codTip)
+            ->value('papenombre');
+
+        $papelTexto = $papelNombre ? trim($papelNombre) : 'INTERVINIENTE';
 
         $filasHtml .= "<tr>
-            <td class='col-papel'>" . trim($papel) . ":</td>
-            <td class='col-nombre'>" . trim($cliente->clienombre ?? 'NO ENCONTRADO') . "</td>
-            <td class='col-cedula'><b>C.I/RUC:</b> " . trim($item['cedruc']) . "</td>
-            <td class='col-est-civil'><b>EST. CIVIL:</b> " . $estCivilTexto . "</td>
+            <td class='col-papel'><b>" . e($papelTexto) . ":</b></td>
+            <td class='col-nombre'>" . e(trim($nombre)) . "</td>
+            <td class='col-cedula'><b>C.I/RUC:</b> " . e(trim($cedula)) . "</td>
         </tr>";
     }
 
-    $tablaHtml = "<table class='tabla-intervinientes'>{$filasHtml}</table>";
+    $tablaHtml = "<table class='table table-sm table-striped align-middle mb-0'>{$filasHtml}</table>";
 
-    // 4. Retornamos el HTML maquetado exactamente igual al reporte final
+    // 4. Retorno JSON con Tipo de Acto y Observaciones
     return response()->json([
-        'status' => 'success',
-        'html_intervinientes' => $tablaHtml,
-        'num_repertorio' => $request->clmvnumrep,
-        'num_inscripcion' => $request->clmvnumins,
-        'fecha_inscripcion' => $request->clmvfecins,
-        'observacion' => $request->clmvobserv,
+        'status'             => 'success',
+        'html_intervinientes'=> $tablaHtml,
+        'num_repertorio'     => $request->input('num_rep'),
+        'num_inscripcion'    => $request->input('num_ins'),
+        'fecha_inscripcion'  => $request->input('fec_ins'),
+        'tipo_acto'          => $nombreActo ?? 'NO ESPECIFICADO',
+        'observacion'        => $request->input('observacion') ?? 'Sin observaciones.',
     ]);
 }
 

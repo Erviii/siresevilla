@@ -419,7 +419,7 @@
         </div>
         
         <div class="sig-box">
-            Abg. Mayra katherine Gallardo Vallejo<br>
+            {{ $registradorActual?->titulo_profesional ?? 'Registrador de la Propiedad' }}. {{ $registradorActual?->nombre_completo ?? 'REGISTRADOR NO ASIGNADO' }}<br>
             <span style="font-size: 10px; color: #333;"><strong>EL REGISTRADOR DE LA PROPIEDAD Y MERCANTIL</strong></span><br>
             <span style="font-size: 9px; color: #555;"><strong>Firma y Sello</strong></span>
         </div>
