@@ -5,6 +5,8 @@ use App\Http\Controllers\SireController;
 use App\Http\Controllers\RegistroMovimientoController;
 use App\Http\Controllers\ConfiguracionController;
 use App\Http\Controllers\OrdenPagoController;
+use App\Http\Controllers\ReporteRegistralController;
+use App\Http\Controllers\FichaRegistralController;
 
 // --- RUTAS DEL SISTEMA SIRE ---
 
@@ -56,6 +58,17 @@ Route::get('/sire/buscar-nombre', [SireController::class, 'buscarNombre'])->name
 
 // Ruta para cambiar el estado de la orden
     Route::put('/ordenes-pago/{id}/estado', [OrdenPagoController::class, 'cambiarEstado'])->name('ordenes-pago.cambiarEstado');
+
+// Reportes PDF de Movimientos Registrales
+Route::get('/reportes/razon-inscripcion/{numrep}/{fecins}/{numins}', [ReporteRegistralController::class, 'razonInscripcionPdf'])
+        ->name('reportes.razon.pdf');
+
+    Route::get('/reportes/acta-inscripcion/{numrep}/{fecins}/{numins}', [ReporteRegistralController::class, 'actaInscripcionPdf'])
+        ->name('reportes.acta.pdf');
+
+
+Route::get('/fichas/aperturar', [FichaRegistralController::class, 'create'])->name('fichas.create');
+    Route::post('/fichas/aperturar', [FichaRegistralController::class, 'store'])->name('fichas.store');
 
 });
 

@@ -96,7 +96,10 @@
                                 <button class="accordion-button collapsed bg-white py-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFicha-{{ $numeroFicha ?: '0' }}" aria-expanded="false">
                                     <div class="d-flex align-items-center w-100 justify-content-between pe-3">
                                         <span class="text-primary fw-bold fs-5">
-                                            <i class="bi bi-folder2-open me-2"></i>Ficha N°: {{ $numeroFicha ?: 'Sin Ficha' }}
+                                            <i class="bi bi-folder2-open me-2"></i>Ficha N°: SDB-{{ $numeroFicha ?: 'Sin Ficha' }}
+                                        </span>
+                                        <span> <a href="{{ route('sire.imprimir.ficha', $numeroFicha) }}" target="_blank" class="btn btn-danger btn-sm rounded-pill px-3">
+                                        <i class="bi bi-file-earmark-pdf me-1">  Ficha Registral</i></a>
                                         </span>
                                         <span class="badge bg-light text-dark border px-3 py-2 fs-7">
                                             {{ count($movimientos) }} acto(s) o movimiento(s)
@@ -116,6 +119,7 @@
                                                     <th style="width: 15%;">Fecha Inscripción</th>
                                                     <th style="width: 30%;">Tipo de Acto / Libro</th>
                                                     <th>Intervinientes en el Acto</th>
+                                                    <th style="width: 13%;">Acciones</th> {{-- <-- NUEVA COLUMNA --}}
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -159,6 +163,42 @@
                                                                 </ul>
                                                             </div>
                                                         </td>
+
+
+                                                       {{-- COLUMNA DE BOTONES DE REPORTES --}}
+<td class="text-center">
+    @php 
+        $fecInsParam = $infoMovimiento->fecha_inscripcion 
+            ? \Carbon\Carbon::parse($infoMovimiento->fecha_inscripcion)->format('Y-m-d') 
+            : date('Y-m-d');
+    @endphp
+
+    <div class="btn-group btn-group-sm" role="group">
+        {{-- Botón Razón de Inscripción --}}
+        <a href="{{ route('reportes.razon.pdf', [
+                'numrep' => $infoMovimiento->num_repertorio,
+                'fecins' => $fecInsParam,
+                'numins' => $infoMovimiento->num_inscripcion
+            ]) }}" 
+           target="_blank" 
+           class="btn btn-outline-danger" 
+           title="Ver Razón de Inscripción (PDF)">
+            <i class="bi bi-file-earmark-pdf"></i> Razón
+        </a>
+
+        {{-- Botón Acta de Inscripción --}}
+        <a href="{{ route('reportes.acta.pdf', [
+                'numrep' => $infoMovimiento->num_repertorio,
+                'fecins' => $fecInsParam,
+                'numins' => $infoMovimiento->num_inscripcion
+            ]) }}" 
+           target="_blank" 
+           class="btn btn-outline-dark" 
+           title="Ver Acta de Inscripción (PDF)">
+            <i class="bi bi-journal-text"></i> Acta
+        </a>
+    </div>
+</td>
                                                     </tr>
                                                 @endforeach
                                             </tbody>

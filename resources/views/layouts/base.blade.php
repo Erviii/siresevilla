@@ -33,7 +33,7 @@
         <!-- Logo / Inicio -->
         <a class="navbar-brand d-flex align-items-center" href="{{ route('sire.dashboard') }}">
             <i class="bi bi-layers-half me-2 fs-3"></i>
-            <span class="fw-bold text-tracking">SIRE - Sistema Registral</span>
+            <span class="fw-bold text-tracking">SIRE - Registro de la Propiedad y Mercantil Sevilla Don Bosco</span>
         </a>
 
         <!-- Botón de colapso para móviles -->
@@ -83,9 +83,10 @@
 <!-- Contenedor del Contenido Dinámico -->
 <div class="container-fluid px-4">
     
-    <!-- Barra de Direcciones / Breadcrumbs -->
-    <nav aria-label="breadcrumb" class="mb-4">
-        <ol class="breadcrumb bg-white p-3 rounded shadow-sm">
+   <nav aria-label="breadcrumb" class="mb-4">
+    <div class="bg-white p-3 rounded shadow-sm d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <!-- Breadcrumbs a la izquierda -->
+        <ol class="breadcrumb m-0 p-0">
             <li class="breadcrumb-item">
                 <a href="{{ route('sire.dashboard') }}" class="text-decoration-none text-primary fw-semibold">
                     <i class="bi bi-house-door-fill me-1"></i>Inicio
@@ -93,11 +94,62 @@
             </li>
             @yield('breadcrumbs')
         </ol>
-    </nav>
+
+        <!-- Reloj con Fecha y Hora en tiempo real a la derecha -->
+        <div class="text-muted small fw-semibold d-flex align-items-center bg-light px-3 py-1 rounded-pill border">
+            <i class="bi bi-calendar3 text-primary me-2"></i>
+            <span id="reloj-fecha" class="me-2 text-capitalize"></span>
+            <span class="text-secondary me-2">|</span>
+            <i class="bi bi-clock-history text-primary me-1"></i>
+            <span id="reloj-hora" class="font-monospace fw-bold text-dark"></span>
+        </div>
+    </div>
+</nav>
 
     @yield('content')
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Script del Reloj en Tiempo Real -->
+    <script>
+        function actualizarReloj() {
+            const ahora = new Date();
+
+            // Formato de Fecha en Español (ej: domingo, 16 de agosto de 2026)
+            const opcionesFecha = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            let fechaTexto = ahora.toLocaleDateString('es-ES', opcionesFecha);
+            
+            // Capitalizar primera letra del día
+            fechaTexto = fechaTexto.charAt(0).toUpperCase() + fechaTexto.slice(1);
+
+            // Formato de Hora (ej: 01:21:32 p. m.)
+            const horaTexto = ahora.toLocaleTimeString('es-ES', { 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit', 
+                hour12: true 
+            });
+
+            const elemFecha = document.getElementById('reloj-fecha');
+            const elemHora = document.getElementById('reloj-hora');
+
+            if (elemFecha && elemHora) {
+                elemFecha.textContent = fechaTexto;
+                elemHora.textContent = horaTexto;
+            }
+        }
+
+        // Ejecutar al cargar la página y actualizar cada 1 segundo
+        document.addEventListener('DOMContentLoaded', function() {
+            actualizarReloj();
+            setInterval(actualizarReloj, 1000);
+        });
+    </script>
+
 @stack('scripts') </body>
 </html>

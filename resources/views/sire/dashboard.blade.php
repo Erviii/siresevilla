@@ -67,17 +67,41 @@
         <div class="col-lg-8">
             
             <div class="card border-0 shadow-sm p-4 mb-4">
-                <h5 class="fw-bold text-dark mb-3"><i class="bi bi-search text-primary me-2"></i>Buscar Ficha para Movimiento</h5>
-                <p class="text-muted small">Ingrese el número de ficha jurídica o de propiedad para comenzar a registrar una inscripción o nota marginal.</p>
-                
-                <form action="#" method="GET" id="formBuscarFicha" onsubmit="redirigirFicha(event)">
-                    <div class="input-group mb-1">
-                        <span class="input-group-text bg-light"><i class="bi bi-hash"></i></span>
-                        <input type="number" id="inputFichaNum" class="form-control form-control-lg" placeholder="Ej: 45892" required>
-                        <button class="btn btn-primary px-4" type="submit">Buscar Ficha</button>
-                    </div>
-                </form>
-            </div>
+    <!-- Encabezado -->
+    <h5 class="fw-bold text-dark mb-1">
+        <i class="bi bi-search text-primary me-2"></i>Buscar Ficha para Movimiento
+    </h5>
+    <p class="text-muted small mb-3">
+        Ingrese el número de ficha jurídica para registrar una inscripción o perturar un nuevo predio.
+    </p>
+
+    <!-- Contenedor alineado lado a lado -->
+    <div class="row g-2 align-items-center">
+        <!-- Input de Búsqueda (Ocupa el espacio principal) -->
+        <div class="col-12 col-md-8 col-lg-9">
+            <form action="#" method="GET" id="formBuscarFicha" onsubmit="redirigirFicha(event)" class="m-0">
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0 text-muted">
+                        <i class="bi bi-hash"></i>
+                    </span>
+                    <input type="number" id="inputFichaNum" class="form-control form-control-lg border-start-0" placeholder="Ej: 45892" required>
+                    <button class="btn btn-primary px-4 fw-semibold" type="submit">
+                        <i class="bi bi-search me-1"></i> Buscar Ficha
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Botón de Apertura (Alineado a la derecha) -->
+        <div class="col-12 col-md-4 col-lg-3 text-md-end">
+            <a href="{{ route('fichas.create') }}" class="btn btn-success btn-lg fw-semibold shadow-sm w-100 text-nowrap">
+                <i class="bi bi-plus-circle me-1"></i> Aperturar Ficha
+            </a>
+        </div>
+    </div>
+</div>
+
+            
 
             <div class="card border-0 shadow-sm p-4">
                 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -87,21 +111,72 @@
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
+                                <th>Ficha</th>
                                 <th>Repertorio</th>
                                 <th>Inscripción</th>
                                 <th>Fecha</th>
                                 <th>Libro</th>
                                 <th>Tipo de Acto</th>
+                                <th>Acciones</th>
+                                
+                                
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($ultimosMovimientos ?? [] as $mov)
+
+                            @php 
+        $fecInsParam = $mov->movifecins 
+            ? \Carbon\Carbon::parse($mov->movifecins)->format('Y-m-d') 
+            : date('Y-m-d');
+    @endphp
                                 <tr>
-                                    <td class="fw-bold text-primary">#{{ $mov->movinumrep }}</td>
+                                    <td class="fw-bold text-primary"> SDB-{{ $mov->num_ficha }}</td>
+                                    <td>{{ $mov->movinumrep }}</td>
                                     <td>{{ $mov->movinumins }}</td>
                                     <td>{{ date('d/m/Y', strtotime($mov->movifecins)) }}</td>
                                     <td><span class="badge bg-secondary bg-opacity-10 text-secondary border px-2 py-1">{{ $mov->librnombre }}</span></td>
                                     <td>{{ $mov->actonombre }}</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm" role="group" aria-label="Reportes PDF">
+                        {{-- Botón Razón de Inscripción --}}
+                        <a href="{{ route('reportes.razon.pdf', [
+                                'numrep' => $mov->movinumrep,
+                                'fecins' => $fecInsParam,
+                                'numins' => $mov->movinumins
+                            ]) }}" 
+                           target="_blank" 
+                           class="btn btn-outline-primary" 
+                           title="Ver Razón de Inscripción (PDF)">
+                            <i class="bi bi-file-earmark-pdf-fill text-danger me-1"></i> Razón
+                        </a>
+
+                        {{-- Botón Acta de Inscripción --}}
+                        <a href="{{ route('reportes.acta.pdf', [
+                                'numrep' => $mov->movinumrep,
+                                'fecins' => $fecInsParam,
+                                'numins' => $mov->movinumins
+                            ]) }}" 
+                           target="_blank" 
+                           class="btn btn-outline-dark" 
+                           title="Ver Acta de Inscripción (PDF)">
+                            <i class="bi bi-journal-text me-1"></i> Acta
+                        </a>
+
+                        {{-- Botón Imprimir Ficha (Si la ficha existe) --}}
+                        @if(!empty($mov->num_ficha))
+                            <a href="{{ route('sire.imprimir.ficha', $mov->num_ficha) }}" 
+                               target="_blank" 
+                               class="btn btn-outline-success" 
+                               title="Ver Ficha Registral (PDF)">
+                                <i class="bi bi-file-earmark-text-fill text-danger me-1"></i> Ficha
+                            </a>
+                        @endif
+                    </div>
+
+
+
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>
@@ -130,13 +205,13 @@
                         </div>
                     </a>
 
-                    <a href="{{ route('sire.buscar.ficha') }}" class="btn btn-white btn-action p-3 text-start d-flex align-items-center rounded shadow-sm text-decoration-none">
+                    <a href="{{ route('fichas.create') }}" class="btn btn-white btn-action p-3 text-start d-flex align-items-center rounded shadow-sm text-decoration-none">
                         <div class="bg-secondary bg-opacity-10 p-2 rounded text-secondary me-3">
                             <i class="bi bi-plus-circle fs-4"></i>
                         </div>
                         <div>
-                            <div class="fw-bold text-dark">Registrar Nuevo Movimiento</div>
-                            <small class="text-muted d-block" style="font-size: 0.75rem;">Registrar Movimientos</small>
+                            <div class="fw-bold text-dark">Apertura Ficha Registral</div>
+                            <small class="text-muted d-block" style="font-size: 0.75rem;">Aperturar Ficha</small>
                         </div>
                     </a>
 

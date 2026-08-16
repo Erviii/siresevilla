@@ -29,7 +29,7 @@ public function indexDashboard()
         $cantLibros = DB::table('sctnmlibr')->count();
 
         // 5. Últimos Movimientos
-        $ultimosMovimientos = DB::table('sctncmovi as mov')
+       /* $ultimosMovimientos = DB::table('sctncmovi as mov')
             ->leftJoin('sctnmacto as act', 'mov.movicodact', '=', 'act.actocodact')
             ->leftJoin('sctnmlibr as lib', 'mov.movicodlib', '=', 'lib.librcodlib')
             ->select(
@@ -41,7 +41,31 @@ public function indexDashboard()
             )
             ->orderBy('mov.movifecins', 'desc')
             ->limit(5)
-            ->get();
+            ->get();*/
+        $ultimosMovimientos = DB::table('sctncmovi as m')
+        ->join('sctnmlibr as l', 'l.librcodlib', '=', 'm.movicodlib')
+        ->join('sctnmacto as a', 'a.actocodact', '=', 'm.movicodact')
+        ->leftJoin('sctnmusua as u', 'u.usuacodusu', '=', 'm.movicodusu')
+        // Unimos con la tabla de referencia de fichas (sctndreff)
+        ->leftJoin('sctndreff as r', function ($join) {
+            $join->on('r.reffcodlib', '=', 'm.movicodlib')
+                 ->on('r.reffnumrep', '=', 'm.movinumrep')
+                 ->on('r.refffecins', '=', 'm.movifecins')
+                 ->on('r.reffnumins', '=', 'm.movinumins');
+        })
+        ->select(
+            'm.movicodlib',
+            'm.movinumrep',
+            'm.movifecins',
+            'm.movinumins',
+            'l.librnombre',
+            'a.actonombre',
+            'u.usuanombre',
+            'r.reffnumfic as num_ficha' // <-- OBTENEMOS EL NÚMERO DE FICHA
+        )
+        ->orderBy('m.movifecins', 'desc')
+        ->take(8) // Los últimos 10 movimientos
+        ->get();
 
         return view('sire.dashboard', compact(
             'cantFichas', 
