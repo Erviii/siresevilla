@@ -78,12 +78,17 @@
                     <div class="d-flex align-items-center gap-2 my-1">
                         <span>Total Fichas:</span> <span class="badge bg-primary fs-6 me-2">{{ count($resultados) }}</span>
                         @if($tipo === 'ficha')
+                            @can('imprimir-ficha')
                             <a href="{{ route('sire.imprimir.ficha', $valor) }}" target="_blank" class="btn btn-danger btn-sm rounded-pill px-3">
                                 <i class="bi bi-file-earmark-pdf me-1"></i> Generar PDF
                             </a>
+                            @endcan
+                            
+                            @can('crear-movimientos')
                             <a href="{{ route('sire.registrar', $valor) }}" class="btn btn-success btn-sm rounded-pill px-3">
                                 <i class="bi bi-plus-circle me-1"></i> Registrar Movimiento
                             </a>
+                            @endcan
                         @endif
                     </div>
                 </div>
@@ -98,8 +103,12 @@
                                         <span class="text-primary fw-bold fs-5">
                                             <i class="bi bi-folder2-open me-2"></i>Ficha N°: SDB-{{ $numeroFicha ?: 'Sin Ficha' }}
                                         </span>
-                                        <span> <a href="{{ route('sire.imprimir.ficha', $numeroFicha) }}" target="_blank" class="btn btn-danger btn-sm rounded-pill px-3">
-                                        <i class="bi bi-file-earmark-pdf me-1">  Ficha Registral</i></a>
+                                        <span> 
+                                            @canany(['ver-fichas', 'imprimir-ficha'])
+                                            <a href="{{ route('sire.imprimir.ficha', $numeroFicha) }}" target="_blank" class="btn btn-danger btn-sm rounded-pill px-3">
+                                                <i class="bi bi-file-earmark-pdf me-1">  Ficha Registral</i>
+                                            </a>
+                                            @endcanany
                                         </span>
                                         <span class="badge bg-light text-dark border px-3 py-2 fs-7">
                                             {{ count($movimientos) }} acto(s) o movimiento(s)
@@ -175,6 +184,7 @@
 
     <div class="btn-group btn-group-sm" role="group">
         {{-- Botón Razón de Inscripción --}}
+         @can('imprimir-razon')
         <a href="{{ route('reportes.razon.pdf', [
                 'numrep' => $infoMovimiento->num_repertorio,
                 'fecins' => $fecInsParam,
@@ -185,8 +195,10 @@
            title="Ver Razón de Inscripción (PDF)">
             <i class="bi bi-file-earmark-pdf"></i> Razón
         </a>
+       @endcan
 
         {{-- Botón Acta de Inscripción --}}
+        @can('imprimir-acta')
         <a href="{{ route('reportes.acta.pdf', [
                 'numrep' => $infoMovimiento->num_repertorio,
                 'fecins' => $fecInsParam,
@@ -197,6 +209,7 @@
            title="Ver Acta de Inscripción (PDF)">
             <i class="bi bi-journal-text"></i> Acta
         </a>
+        @endcan
     </div>
 </td>
                                                     </tr>

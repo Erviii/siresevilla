@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles; // <-- Importamos HasRoles
 
 class Usuario extends Authenticatable
 {
-    use Notifiable;
+    use Notifiable, HasRoles;
 
     // 1. Apuntamos a tu tabla real
     protected $table = 'sctnmusua'; 
@@ -19,8 +20,26 @@ class Usuario extends Authenticatable
     public $incrementing = false;
     protected $keyType = 'string';
 
+    
+
     // 3. Desactivamos los timestamps (porque tu tabla antigua no tiene created_at ni updated_at)
     public $timestamps = false;
+
+// HABILITAR ASIGNACIÓN MASIVA (MASS ASSIGNMENT)
+    protected $fillable = [
+        'usualogin',   // <-- AGREGAR AQUÍ
+        'usuanombre',
+        'usuapasswr',
+        'usuastatus',
+        'usuatitulo',
+        'usuafecing',
+        'usuacodusu',
+    ];
+
+    protected $hidden = [
+        'usuapasswr',
+    ];
+
 
     // 4. Indicamos a Laravel cuál es la columna de la contraseña
     public function getAuthPassword()

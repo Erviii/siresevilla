@@ -85,18 +85,22 @@
                         <i class="bi bi-hash"></i>
                     </span>
                     <input type="number" id="inputFichaNum" class="form-control form-control-lg border-start-0" placeholder="Ej: 45892" required>
+                    @can('crear-movimientos')
                     <button class="btn btn-primary px-4 fw-semibold" type="submit">
                         <i class="bi bi-search me-1"></i> Buscar Ficha
                     </button>
+                    @endcan
                 </div>
             </form>
         </div>
 
         <!-- Botón de Apertura (Alineado a la derecha) -->
         <div class="col-12 col-md-4 col-lg-3 text-md-end">
+            @can('crear-fichas')
             <a href="{{ route('fichas.create') }}" class="btn btn-success btn-lg fw-semibold shadow-sm w-100 text-nowrap">
                 <i class="bi bi-plus-circle me-1"></i> Aperturar Ficha
             </a>
+            @endcan
         </div>
     </div>
 </div>
@@ -140,6 +144,10 @@
                                     <td>
                                         <div class="btn-group btn-group-sm" role="group" aria-label="Reportes PDF">
                         {{-- Botón Razón de Inscripción --}}
+
+                          
+            
+                        @can('imprimir-razon')
                         <a href="{{ route('reportes.razon.pdf', [
                                 'numrep' => $mov->movinumrep,
                                 'fecins' => $fecInsParam,
@@ -150,8 +158,10 @@
                            title="Ver Razón de Inscripción (PDF)">
                             <i class="bi bi-file-earmark-pdf-fill text-danger me-1"></i> Razón
                         </a>
+                        @endcan
 
                         {{-- Botón Acta de Inscripción --}}
+                        @can('imprimir-acta')
                         <a href="{{ route('reportes.acta.pdf', [
                                 'numrep' => $mov->movinumrep,
                                 'fecins' => $fecInsParam,
@@ -162,8 +172,10 @@
                            title="Ver Acta de Inscripción (PDF)">
                             <i class="bi bi-journal-text me-1"></i> Acta
                         </a>
+                        @endcan
 
                         {{-- Botón Imprimir Ficha (Si la ficha existe) --}}
+                        @can('imprimir-ficha')
                         @if(!empty($mov->num_ficha))
                             <a href="{{ route('sire.imprimir.ficha', $mov->num_ficha) }}" 
                                target="_blank" 
@@ -172,6 +184,7 @@
                                 <i class="bi bi-file-earmark-text-fill text-danger me-1"></i> Ficha
                             </a>
                         @endif
+                        @endcan
                     </div>
 
 
@@ -194,6 +207,7 @@
                 <h5 class="fw-bold text-dark mb-3"><i class="bi bi-list-task text-primary me-2"></i>Menú de Opciones</h5>
                 <p class="text-muted small mb-4">Accesos directos globales a las principales operaciones de la aplicación.</p>
                 
+                @can('ver-fichas')
                 <div class="d-grid gap-3">
                     <a href="{{ route('sire.index') }}" class="btn btn-white btn-action p-3 text-start d-flex align-items-center rounded shadow-sm text-decoration-none">
                         <div class="bg-primary bg-opacity-10 p-2 rounded text-primary me-3">
@@ -204,7 +218,8 @@
                             <small class="text-muted d-block" style="font-size: 0.75rem;">Consultar y exportar la bitácora global</small>
                         </div>
                     </a>
-
+@endcan
+ @can('crear-fichas')
                     <a href="{{ route('fichas.create') }}" class="btn btn-white btn-action p-3 text-start d-flex align-items-center rounded shadow-sm text-decoration-none">
                         <div class="bg-secondary bg-opacity-10 p-2 rounded text-secondary me-3">
                             <i class="bi bi-plus-circle fs-4"></i>
@@ -214,7 +229,8 @@
                             <small class="text-muted d-block" style="font-size: 0.75rem;">Aperturar Ficha</small>
                         </div>
                     </a>
-
+@endcan
+                    @can('configurar-sistema')
                     <a href="{{ route('configuracion.index') }}" class="btn btn-white btn-action p-3 text-start d-flex align-items-center rounded shadow-sm text-decoration-none">
                         <div class="bg-dark bg-opacity-10 p-2 rounded text-dark me-3">
                             <i class="bi bi-gear fs-4"></i>
@@ -224,7 +240,8 @@
                             <small class="text-muted d-block" style="font-size: 0.75rem;">Configuracion del Sistema</small>
                         </div>
                     </a>
-
+                    @endcan
+@can('gestionar-pagos')
                    <a href="{{ route('ordenes-pago.index') }}" class="btn bg-white border border-primary-subtle border-2 btn-action p-3 text-start d-flex align-items-center rounded-3 shadow-sm text-decoration-none">
     <div class="bg-primary text-white p-3 rounded-3 me-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 48px; height: 48px;">
         <i class="bi bi-receipt-cutoff fs-3"></i>
@@ -234,6 +251,30 @@
         <small class="text-primary fw-semibold d-block" style="font-size: 0.78rem;">Solicitudes y Liquidación de Aranceles</small>
     </div>
 </a>
+@endcan
+@can('administrar-usuarios')
+<a href="{{ route('usuarios.index') }}" class="btn bg-white border border-primary-subtle border-2 btn-action p-3 text-start d-flex align-items-center rounded-3 shadow-sm text-decoration-none">
+    <div class="bg-primary text-white p-3 rounded-3 me-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 48px; height: 48px;">
+        <i class="bi bi-people-fill fs-3"></i>
+    </div>
+    <div>
+        <div class="fw-bold text-dark fs-6 mb-0">Gestión de Usuarios</div>
+        <small class="text-primary fw-semibold d-block" style="font-size: 0.78rem;">Administración de Perfiles y Roles</small>
+    </div>
+</a>
+@endcan
+
+@can('administrar-usuarios')
+<a href="{{ route('roles.index') }}" class="btn bg-white border border-primary-subtle border-2 btn-action p-3 text-start d-flex align-items-center rounded-3 shadow-sm text-decoration-none h-100">
+            <div class="bg-primary text-white p-3 rounded-3 me-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 48px; height: 48px;">
+                <i class="bi bi-shield-lock-fill fs-3"></i>
+            </div>
+            <div>
+                <div class="fw-bold text-dark fs-6 mb-0">Matriz de Permisos</div>
+                <small class="text-primary fw-semibold d-block" style="font-size: 0.78rem;">Configuración de Accesos por Rol</small>
+            </div>
+        </a>
+        @endcan
                 </div>
             </div>
         </div>

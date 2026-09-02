@@ -266,6 +266,5 @@
             $pdf->page_text($x, $y, $text, $font, $size, $color);
         }
     </script>
-
 </body>
 </html>

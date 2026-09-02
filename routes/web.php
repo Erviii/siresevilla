@@ -7,6 +7,9 @@ use App\Http\Controllers\ConfiguracionController;
 use App\Http\Controllers\OrdenPagoController;
 use App\Http\Controllers\ReporteRegistralController;
 use App\Http\Controllers\FichaRegistralController;
+use App\Http\Controllers\UsuarioController;
+use App\Http\Controllers\RoleController;
+
 
 // --- RUTAS DEL SISTEMA SIRE ---
 
@@ -70,7 +73,32 @@ Route::get('/reportes/razon-inscripcion/{numrep}/{fecins}/{numins}', [ReporteReg
 Route::get('/fichas/aperturar', [FichaRegistralController::class, 'create'])->name('fichas.create');
     Route::post('/fichas/aperturar', [FichaRegistralController::class, 'store'])->name('fichas.store');
 
+
+
+
+
+// Administración de Usuarios y Roles (Solo Super Admin)
+    Route::group(['middleware' => ['role:Super Admin']], function () {
+        Route::get('/usuarios', [UsuarioController::class, 'index'])->name('usuarios.index');
+        Route::get('/usuarios/crear', [UsuarioController::class, 'create'])->name('usuarios.create');
+        Route::post('/usuarios', [UsuarioController::class, 'store'])->name('usuarios.store');
+        Route::get('/usuarios/{login}/editar', [UsuarioController::class, 'edit'])->name('usuarios.edit');
+        Route::put('/usuarios/{login}', [UsuarioController::class, 'update'])->name('usuarios.update');
+
+
+        // Roles y Matriz de Permisos
+        Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');
+        Route::get('/roles/crear', [RoleController::class, 'create'])->name('roles.create');
+        Route::post('/roles', [RoleController::class, 'store'])->name('roles.store');
+        Route::get('/roles/{id}/editar', [RoleController::class, 'edit'])->name('roles.edit');
+        Route::put('/roles/{id}', [RoleController::class, 'update'])->name('roles.update');
+    });
+
+
 });
+
+
+
 
 //Route::get('/registrar-movimiento', [RegistroMovimientoController::class, 'indexregistrar'])->name('sire.registrar');
 //Route::get('/movimientos/registrar/{ficha}', [RegistroMovimientoController::class, 'indexregistrar'])->name('sire.registrar');

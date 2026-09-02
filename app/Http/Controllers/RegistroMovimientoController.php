@@ -42,56 +42,62 @@ public function indexregistrar($fichaNum)
     /**
      * Procesa la inserción del movimiento y los intervinientes.
      */
+
 public function storeMovimiento(Request $request)
 {
-    // Validamos que por lo menos venga un interviniente
+    // Validamos que vengan los datos obligatorios
     $request->validate([
-        'roles' => 'required|array',
+        'roles'   => 'required|array',
         'cedulas' => 'required|array',
         'nombres' => 'required|array',
         'cod_lib' => 'required',
         'num_rep' => 'required',
         'num_ins' => 'required',
+        'num_tom' => 'required', // <-- Agregamos el tomo a la validación
     ]);
 
     DB::transaction(function () use ($request) {
 
-    // Accedes directamente a la columna de la base de datos desde el usuario autenticado
-    $codigoUsuario = Auth::user()->usuacodusu;
+        // Accedes directamente a la columna de la base de datos desde el usuario autenticado
+        $codigoUsuario = Auth::user()->usuacodusu;
         
         // Usamos la fecha de inscripción que viene del formulario, o la actual si falla
         $fechaInscripcion = $request->input('fec_ins') ?? date('Y-m-d');
+        
         // 1. Insertar Movimiento Principal (sctncmovi)
         DB::table('sctncmovi')->insert([
             'movicodlib' => $request->cod_lib,
             'movinumrep' => $request->num_rep,
             'movifecins' => $fechaInscripcion, 
             'movinumins' => $request->num_ins,
+            'movinumtom' => $request->num_tom,  // <-- Se agrega a sctncmovi
             'movicodact' => $request->cod_acto,
             'moviobserv' => $request->observacion,
             'movicodcan' => $request->cod_can,
             'movicodjon' => $request->cod_jon,
             'movicodusu' => $codigoUsuario,
-            
-            
         ]);
+        
         // 2. Vincular con la Ficha (sctndreff)
         DB::table('sctndreff')->insert([
             'refftipfic' => $request->tip_fic,
-            'reffnumfic' => $request->fichnumfic, // Ajustado a "fichnumfic" como está en tu <input>
+            'reffnumfic' => $request->fichnumfic,
             'reffcodlib' => $request->cod_lib,
             'reffnumrep' => $request->num_rep,
             'refffecins' => $fechaInscripcion,
             'reffnumins' => $request->num_ins,
+            'reffnumtom' => $request->num_tom,  // <-- Se agrega a sctndreff
         ]);
+        
         // 3. Sincronizar y Guardar Intervinientes (SCTNMCLIE y SCTNDCLMV)
-        $roles = $request->input('roles');
+        $roles   = $request->input('roles');
         $cedulas = $request->input('cedulas');
         $nombres = $request->input('nombres');
+        
         foreach ($cedulas as $index => $cedula) {
-            $cedula = trim($cedula);
-            $tipoCli = trim($roles[$index]);
-            $nombre = trim($nombres[$index] ?? 'CLIENTE NUEVO');
+            $cedula     = trim($cedula);
+            $tipoCli    = trim($roles[$index]);
+            $nombre     = trim($nombres[$index] ?? 'CLIENTE NUEVO');
             $secuencial = 1; // Por defecto asignamos el secuencial 1
 
             // A. Asegurar existencia en el catálogo maestro (sctnmclie)
@@ -103,7 +109,7 @@ public function storeMovimiento(Request $request)
 
             if (!$clienteExiste) {
                 DB::table('sctnmclie')->insert([
-                    'clietipcli' => 'S',
+                    'clietipcli' => 'S', // ¿En tu sistema siempre es S u Ojo si deberia ser el tipo de Interviniente?
                     'cliecedruc' => $cedula,
                     'clieseccli' => $secuencial,
                     'clienombre' => mb_strtoupper($nombre),
@@ -116,15 +122,17 @@ public function storeMovimiento(Request $request)
                 'clmvnumrep' => $request->num_rep,
                 'clmvfecins' => $fechaInscripcion,
                 'clmvnumins' => $request->num_ins,
-                'clmvtipcli' => 'S',
+                'clmvtipcli' => 'S', 
                 'clmvcedruc' => $cedula,
                 'clmvseccli' => $secuencial,
                 'clmvcodtip' => $tipoCli,
             ]);
         }
     });
+    
     return redirect()->back()->with('success', 'Movimiento e intervinientes registrados correctamente');
 }
+
 public function preview(Request $request)
 {
     // 1. Validación de campos

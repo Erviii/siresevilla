@@ -46,28 +46,32 @@
             <ul class="navbar-nav">
                 @auth
                     <li class="nav-item dropdown">
-                        <button class="btn btn-link nav-link dropdown-toggle text-white d-flex align-items-center border-0" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-person-circle me-2 fs-5"></i>
-                            <span>{{ Auth::user()->usuanombre ?? Auth::user()->uanombre ?? 'Operador Registral' }}</span>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="navbarDarkDropdownMenuLink">
-                            <li>
-                                <span class="dropdown-item-text text-muted small">
-                                    <i class="bi bi-shield-lock me-1"></i> Sesión Activa
-                                </span>
-                            </li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <!-- Formulario de salida seguro -->
-                                <form action="{{ route('logout') }}" method="POST" class="m-0">
-                                    @csrf
-                                    <button type="submit" class="dropdown-item text-danger d-flex align-items-center">
-                                        <i class="bi bi-box-arrow-right me-2"></i> Cerrar Sesión
-                                    </button>
-                                </form>
-                            </li>
-                        </ul>
-                    </li>
+    <button class="btn btn-link nav-link dropdown-toggle text-white d-flex align-items-center border-0" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="bi bi-person-circle me-2 fs-5"></i>
+        <span>{{ Auth::user()->usuanombre ?? Auth::user()->uanombre ?? 'Operador Registral' }}</span>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="navbarDarkDropdownMenuLink">
+        <li>
+            <span class="dropdown-item-text d-flex flex-column pb-1">
+                <span class="text-muted small">
+                    <i class="bi bi-shield-lock me-1"></i> 
+                    <!-- Muestra el rol aquí -->
+                    {{ Auth::user()->getRoleNames()->first() ?? 'Sin Rol Asignado' }}
+                </span>
+            </span>
+        </li>
+        <li><hr class="dropdown-divider"></li>
+        <li>
+            <!-- Formulario de salida seguro -->
+            <form action="{{ route('logout') }}" method="POST" class="m-0">
+                @csrf
+                <button type="submit" class="dropdown-item text-danger d-flex align-items-center">
+                    <i class="bi bi-box-arrow-right me-2"></i> Cerrar Sesión
+                </button>
+            </form>
+        </li>
+    </ul>
+</li>
                 @else
                     <li class="nav-item">
                         <a href="{{ route('login') }}" class="nav-link text-white">

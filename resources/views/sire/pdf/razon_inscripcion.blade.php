@@ -187,7 +187,7 @@
 </div>
 
     <div class="title-banner">
-        <h1>RAZÓN Y CERTIFICADO DE INSCRIPCIÓN DE MOVIMIENTO REGISTRAL</h1>
+        <h1>RAZÓN DE INSCRIPCIÓN DE MOVIMIENTO REGISTRAL</h1>
         <p>Documento oficial generado automáticamente por el Sistema SIRE</p>
     </div>
 

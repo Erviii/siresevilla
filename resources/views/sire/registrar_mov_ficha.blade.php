@@ -35,9 +35,9 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <h4 class="mb-0 fw-bold"><i class="bi bi-journal-plus me-2"></i>SIRE - Ingreso de Movimiento Registral</h4>
-                        <small class="text-white-50">Asociado a la Ficha Nº: <strong>{{ $ficha->fichnumfic }}</strong></small>
+                        <small class="text-white-50">Asociado a la Ficha Nº: SBD-<strong>{{ $ficha->fichnumfic }}</strong></small>
                     </div>
-                    <span class="badge bg-light text-primary fs-6 py-2 px-3">Ficha Nº {{ $ficha->fichnumfic }}</span>
+                    <span class="badge bg-light text-primary fs-6 py-2 px-3">Ficha Nº SDB-{{ $ficha->fichnumfic }}</span>
                 </div>
             </div>
             
@@ -68,7 +68,7 @@
                     <!-- 1. Datos Generales de Inscripción -->
                     <h5 class="section-title mb-3 fs-5"><i class="bi bi-info-circle me-2"></i>1. Datos Generales de Inscripción</h5>
                     <div class="row g-3 mb-4">
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <label class="form-label fw-semibold text-secondary">Libro:</label>
                             <select name="cod_lib" class="form-select" required>
                                 <option value="">Seleccione...</option>
@@ -77,8 +77,14 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-3">
-                            <label class="form-label fw-semibold text-secondary">Nº Repertorio:</label>
+                        <!-- NUEVO CAMPO: TOMO -->
+                        <div class="col-md-2">
+                            <label class="form-label fw-semibold text-secondary">Tomo:</label>
+                            <input type="number" step="1" name="num_tom" class="form-control" required placeholder="Ej: 1">
+                        </div>
+                        <!-- FIN NUEVO CAMPO -->
+                        <div class="col-md-2">
+                            <label class="form-label fw-semibold text-secondary">Nº Rep:</label>
                             <input type="number" step="1" name="num_rep" class="form-control" required placeholder="Ej: 12450">
                         </div>
                         <div class="col-md-3">
@@ -190,7 +196,6 @@
 </div>
 
 <!-- Modal de Previsualización -->
-<!-- Modal de Previsualización -->
 <div id="modalPreview" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -199,12 +204,13 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <!-- Cabecera de Inscripción -->
+                <!-- Cabecera de Inscripción (AHORA INCLUYE TOMO) -->
                 <div class="preview-header bg-light p-3 mb-3 rounded border">
                     <div class="row text-center">
-                        <div class="col-md-4"><strong>REP N°:</strong> <span id="prev_rep"></span></div>
-                        <div class="col-md-4"><strong>INS N°:</strong> <span id="prev_ins"></span></div>
-                        <div class="col-md-4"><strong>FECHA:</strong> <span id="prev_fec"></span></div>
+                        <div class="col-md-3"><strong>TOMO:</strong> <span id="prev_tom"></span></div>
+                        <div class="col-md-3"><strong>REP N°:</strong> <span id="prev_rep"></span></div>
+                        <div class="col-md-3"><strong>INS N°:</strong> <span id="prev_ins"></span></div>
+                        <div class="col-md-3"><strong>FECHA:</strong> <span id="prev_fec"></span></div>
                     </div>
                 </div>
 
@@ -271,48 +277,48 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     // 3. Petición AJAX para la Previsualización
-  // Petición AJAX para la Previsualización
-$(document).off('click', '#btnPreview').on('click', '#btnPreview', function(e) {
-    e.preventDefault();
-    e.stopImmediatePropagation();
+    $(document).off('click', '#btnPreview').on('click', '#btnPreview', function(e) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
 
-    let formData = $('#formMovimiento').serialize();
+        let formData = $('#formMovimiento').serialize();
 
-    $.ajax({
-        url: '{{ route("movimientos.preview") }}',
-        type: 'POST',
-        data: formData,
-        dataType: 'json',
-        success: function(response) {
-            // Asignación de datos al modal
-            $('#prev_rep').text(response.num_repertorio || 'N/A');
-            $('#prev_ins').text(response.num_inscripcion || 'N/A');
-            $('#prev_fec').text(response.fecha_inscripcion || 'N/A');
-            $('#prev_acto').text(response.tipo_acto || 'N/A');
-            $('#prev_obs').text(response.observacion || 'Sin observaciones.');
-            
-            $('#prev_intervinientes').html(response.html_intervinientes);
+        $.ajax({
+            url: '{{ route("movimientos.preview") }}',
+            type: 'POST',
+            data: formData,
+            dataType: 'json',
+            success: function(response) {
+                // Asignación de datos al modal (AGREGADA LA LÍNEA DEL TOMO)
+                $('#prev_tom').text(response.num_tom || $('input[name="num_tom"]').val() || 'N/A'); 
+                $('#prev_rep').text(response.num_repertorio || 'N/A');
+                $('#prev_ins').text(response.num_inscripcion || 'N/A');
+                $('#prev_fec').text(response.fecha_inscripcion || 'N/A');
+                $('#prev_acto').text(response.tipo_acto || 'N/A');
+                $('#prev_obs').text(response.observacion || 'Sin observaciones.');
+                
+                $('#prev_intervinientes').html(response.html_intervinientes);
 
-            // Desplegar Modal Bootstrap 5
-            let modalElem = document.getElementById('modalPreview');
-            let modalInstance = bootstrap.Modal.getInstance(modalElem) || new bootstrap.Modal(modalElem);
-            modalInstance.show();
-        },
-        error: function(xhr) {
-            if (xhr.status === 422) {
-                let errors = xhr.responseJSON.errors;
-                let mensaje = 'Por favor completa los siguientes campos obligatorios:\n\n';
-                $.each(errors, function(key, val) {
-                    mensaje += '• ' + val[0] + '\n';
-                });
-                alert(mensaje);
-            } else {
-                alert('Error al generar la vista previa. Revisa la consola.');
-                console.error(xhr.responseText);
+                // Desplegar Modal Bootstrap 5
+                let modalElem = document.getElementById('modalPreview');
+                let modalInstance = bootstrap.Modal.getInstance(modalElem) || new bootstrap.Modal(modalElem);
+                modalInstance.show();
+            },
+            error: function(xhr) {
+                if (xhr.status === 422) {
+                    let errors = xhr.responseJSON.errors;
+                    let mensaje = 'Por favor completa los siguientes campos obligatorios:\n\n';
+                    $.each(errors, function(key, val) {
+                        mensaje += '• ' + val[0] + '\n';
+                    });
+                    alert(mensaje);
+                } else {
+                    alert('Error al generar la vista previa. Revisa la consola.');
+                    console.error(xhr.responseText);
+                }
             }
-        }
+        });
     });
-});
 
     // 4. Confirmar Guardado desde la Modal
     $('#btnConfirmarGuardar').on('click', function() {
