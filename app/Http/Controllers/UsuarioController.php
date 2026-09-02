@@ -98,8 +98,8 @@ class UsuarioController extends Controller
         DB::transaction(function () use ($request, $usuario) {
             $data = [
                 'usuanombr'  => trim($request->usuanombr),
-                'usuaestado' => $request->usuaestado ?? 'A',
-                'usuacargo'  => $request->usuacargo,
+                'usuastatus' => $request->usuaestado ?? 'A',
+                'usuatitulo'  => $request->usuacargo,
             ];
 
             // Si el usuario escribió una contraseña nueva, la actualizamos
