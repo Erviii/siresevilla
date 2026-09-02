@@ -181,7 +181,7 @@
 
                         <div class="col-md-6">
                             <label class="form-label fw-semibold text-secondary">Nombre Completo:</label>
-                            <input type="text" name="usuanombr" id="edit_usuanombr" class="form-control" required>
+                            <input type="text" name="usuanombr" id="edit_usuanombr" class="form-control">
                         </div>
 
                         <div class="col-md-6">
