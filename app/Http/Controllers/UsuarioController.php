@@ -98,7 +98,7 @@ class UsuarioController extends Controller
         DB::transaction(function () use ($request, $usuario) {
             $data = [
                 'usuanombr'  => trim($request->usuanombr),
-                'usuastatus' => $request->usuaestado ?? 'A',
+                'usuastatus' => $request->usuastatus ?? 'AC',
                 'usuatitulo'  => $request->usuacargo,
             ];
 
