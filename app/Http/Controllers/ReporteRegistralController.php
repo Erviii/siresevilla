@@ -29,6 +29,7 @@ class ReporteRegistralController extends Controller
                 'm.movinumrep',
                 'm.movifecins',
                 'm.movinumins',
+                'm.movinumtom',
                 'm.moviobserv',
                 'm.movicodusu',
                 'l.librnombre', 

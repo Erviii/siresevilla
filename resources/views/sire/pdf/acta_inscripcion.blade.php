@@ -15,32 +15,52 @@
             color: #0f172a;
         }
 
-        .header-acta {
-            text-align: center;
-            border-bottom: 2px double #0f172a;
+        /* Encabezado */
+        .header {
+            width: 100%;
+            border-bottom: 2px solid #1e3a8a;
             padding-bottom: 8px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
-        .header-acta h2 {
+        .header table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .header-title {
             font-size: 13pt;
-            margin: 0;
+            font-weight: bold;
+            color: #1e3a8a;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-        .header-acta h3 {
-            font-size: 10pt;
-            font-weight: normal;
-            margin: 3px 0 0 0;
+        .header-subtitle {
+            font-size: 8.5pt;
+            color: #64748b;
             text-transform: uppercase;
         }
-
-        .acta-title {
-            text-align: center;
+        .doc-type {
+            text-align: right;
+            font-size: 10.5pt;
             font-weight: bold;
-            font-size: 12pt;
-            margin-bottom: 18px;
-            text-decoration: underline;
+            color: #0f172a;
+        }
+
+         .title-banner {
+            background-color: #f1f5f9;
+            border-left: 4px solid #1e3a8a;
+            padding: 8px 12px;
+            margin-bottom: 15px;
+        }
+        .title-banner h1 {
+            font-size: 11pt;
+            margin: 0;
+            color: #0f172a;
             text-transform: uppercase;
+        }
+        .title-banner p {
+            margin: 2px 0 0 0;
+            font-size: 8pt;
+            color: #64748b;
         }
 
         .meta-box {
@@ -63,6 +83,60 @@
         }
         .meta-box .val {
             border-bottom: 1px solid #cbd5e1;
+        }
+
+         .grid-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+        .grid-table td {
+            padding: 5px 8px;
+            font-size: 8.5pt;
+            vertical-align: top;
+            border: 1px solid #e2e8f0;
+        }
+        .grid-table .label {
+            font-weight: bold;
+            color: #334155;
+            width: 22%;
+            background-color: #f8fafc;
+        }
+        .grid-table .value {
+            color: #0f172a;
+            width: 28%;
+        }
+ /* Secciones y Tablas */
+        .section-title {
+            font-size: 9pt;
+            font-weight: bold;
+            color: #1e3a8a;
+            text-transform: uppercase;
+            border-bottom: 1px solid #cbd5e1;
+            padding-bottom: 3px;
+            margin-top: 14px;
+            margin-bottom: 8px;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 6px;
+            margin-bottom: 10px;
+        }
+        .data-table th {
+            background-color: #1e3a8a;
+            color: #ffffff;
+            font-size: 8pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 5px 8px;
+            text-align: left;
+            border: 1px solid #1e3a8a;
+        }
+        .data-table td {
+            padding: 5px 8px;
+            font-size: 8.5pt;
+            border: 1px solid #e2e8f0;
         }
 
         p.narrative {
@@ -124,57 +198,64 @@
 </head>
 <body>
 
-    <div class="header-acta">
-    <table style="width: 100%; border-collapse: collapse;">
+     <div class="header">
+    <table>
         <tr>
-            <td style="width: 20%; vertical-align: middle; text-align: left;">
+            <td style="width: 20%; vertical-align: middle;">
                 <img src="{{ public_path('images/logosevilla.png') }}" style="width: 85px; height: auto; display: block;">
             </td>
-            <td style="width: 80%; vertical-align: middle; text-align: center;">
+            <td style="width: 50%; vertical-align: middle;">
                 <div class="header-title"><strong>{{ $configuracion->nombre_registro ?? 'REGISTRO DE LA PROPIEDAD Y MERCANTIL' }}</strong></div>
                 <div class="header-subtitle">{{ $configuracion->direccion ?? 'Sevilla don Bosco, Ecuador' }}</div>
-                <h3 style="margin: 3px 0 0 0; font-size: 10pt; font-weight: normal; text-transform: uppercase;">LIBRO {{ $movimiento->librnombre }} - ACTA DE INSCRIPCIÓN</h3>
+            </td>
+            <td class="doc-type" style="width: 30%; vertical-align: middle; text-align: right;">
+                @if(!empty($qrBase64))
+                    <img src="data:image/png;base64,{{ $qrBase64 }}" style="width: 90px; height: 90px; display: inline-block;">
+                @endif
+                
             </td>
         </tr>
     </table>
 </div>
-
-    <div class="acta-title">
-        ACTA DE INSCRIPCIÓN N° {{ $movimiento->movinumins }}
+   <div class="title-banner">
+        <h1>ACTA DE INSCRIPCIÓN</h1>
+        <p>Documento oficial generado automáticamente por el Sistema SIRE</p>
     </div>
 
-    <table class="meta-box">
+    <table class="grid-table">
         <tr>
-            <td class="lbl">NÚMERO DE REPERTORIO:</td>
-            <td class="val">{{ $movimiento->movinumrep }}</td>
+            <td class="label">Numero. Repertorio:</td>
+            <td class="value">{{ $movimiento->movinumrep }}</td>
+            <td class="label">Fecha Inscripción:</td>
+            <td class="value">{{ date('d/m/Y', strtotime($movimiento->movifecins)) }}</td>
         </tr>
         <tr>
-            <td class="lbl">FECHA DE INSCRIPCIÓN:</td>
-            <td class="val">{{ date('d/m/Y H:i', strtotime($movimiento->movifecins)) }}</td>
+            <td class="label">Numero. Inscripción:</td>
+            <td class="value">{{ $movimiento->movinumins }}</td>
+            <td class="label">Numero. Tomo</td>
+            <td class="value">{{ $movimiento->movinumtom }}</td>
         </tr>
         <tr>
-            <td class="lbl">NATURALEZA DEL ACTO:</td>
-            <td class="val"><strong>{{ $movimiento->actonombre }}</strong></td>
-        </tr>
-        <tr>
-            <td class="lbl">FICHA REGISTRAL:</td>
-            <td class="val">{{ $fichaRef->reffnumfic ?? 'S/N' }}</td>
+            <td class="label">Ficha N°:</td>
+            <td class="value">SDB-{{ $fichaRef->reffnumfic ?? 'S/N' }}</td>
+            <td class="label">Naturaleza del Acto</td>
+            <td class="value">{{ $movimiento->actonombre }}</td>
         </tr>
     </table>
 
     <p class="narrative">
-        En el Cantón {{ $movimiento->cantnombre ?? 'Central' }}, el {{ date('d', strtotime($movimiento->movifecins)) }} de {{ \Carbon\Carbon::parse($movimiento->movifecins)->translatedFormat('F') }} del año {{ date('Y', strtotime($movimiento->movifecins)) }}, a las {{ date('H:i', strtotime($movimiento->movifecins)) }} horas, se procedió a inscribir en el <strong>LIBRO {{ $movimiento->librnombre }}</strong> el acto registral formalizado mediante el Sistema SIRE bajo el número de repertorio <strong>{{ $movimiento->movinumrep }}</strong> y la inscripción número <strong>{{ $movimiento->movinumins }}</strong>.
+        En el Cantón {{ $movimiento->cantnombre ?? 'Central' }}, el {{ date('d', strtotime($movimiento->movifecins)) }} de {{ \Carbon\Carbon::parse($movimiento->movifecins)->translatedFormat('F') }} del año {{ date('Y', strtotime($movimiento->movifecins)) }}, se procedió a inscribir en el <strong>LIBRO {{ $movimiento->librnombre }}</strong> el acto registral formalizado mediante el Sistema Registral signado mediante el número de repertorio <strong>{{ $movimiento->movinumrep }}</strong>, número de tomo <strong>{{ $movimiento->movinumtom }}</strong>  y la inscripción número <strong>{{ $movimiento->movinumins }}</strong>.
     </p>
 
-    <div class="section-h">1. ANTECEDENTES Y DETALLES</div>
+    <div class="section-title">1. OBSERVACIONES</div>
     <p class="narrative">
-        Se presentó para la respectiva inscripción la documentación pertinente autorizada ante el {{ $movimiento->junonombre ?? 'Juzgado/Notaría correspondiente' }}. Habiéndose verificado el cumplimiento de todos los tributos, derechos y aranceles registrales establecidos por la ley.
+        {{ $movimiento->moviobserv ?? 'Sin observaciones adicionadas.' }}
     </p>
 
- <div class="section-h">2. DESCRIPCIÓN Y LINDEROS DEL INMUEBLE</div>
+ <div class="section-title">2. DESCRIPCIÓN Y LINDEROS DEL INMUEBLE</div>
 <div class="property-desc">
     <div style="margin-bottom: 6px;">
-        <strong>Ficha Registral N°:</strong> SDB-{{ $fichaRef->reffnumfic ?? 'S/N' }} <br>
+        
         <strong>Clave Catastral:</strong> {{ $fichaRef->fichcodigo ?? 'N/A' }} <br>
         <strong>Ubicación:</strong> {{ $fichaRef->fichparroq ?? $movimiento->cantnombre ?? 'N/A' }}
     </div>
@@ -202,14 +283,14 @@
     </div>
 </div>
 
-    <div class="section-h">3. INTERVINIENTES Y COMPARECIENTES</div>
+    <div class="section-title">3. INTERVINIENTES Y COMPARECIENTES</div>
     <p class="narrative">
         Comparecen al presente asiento registral las siguientes personas:
     </p>
     <ul>
         @forelse($intervinientes as $persona)
             <li style="font-size: 10pt; font-family: sans-serif; margin-bottom: 3px;">
-                <strong>{{ $persona->clienombre }}</strong> con numero de identifacion <code>{{ $persona->cliecedruc }}</code> y en calidad de: <strong>{{ $persona->papenombre ?? 'INTERVINIENTE' }}</strong>.
+                <strong>{{ $persona->clienombre }}</strong> con numero de identificacion <code>{{ $persona->cliecedruc }}</code> y en calidad de: <strong>{{ $persona->papenombre ?? 'INTERVINIENTE' }}</strong>.
             </li>
         @empty
             <li style="font-size: 10pt; font-family: sans-serif;">Sin intervinientes detallados.</li>
@@ -228,29 +309,33 @@
             <td style="width: 30%; text-align: center;">
                 @if(!empty($qrBase64))
                     <img src="data:image/png;base64,{{ $qrBase64 }}" style="width: 90px; height: 90px; display: inline-block;">
+            <div style="font-size: 7.5pt; color: #64748b; margin-top: 2px;">Validación SIRE</div>    
                 @endif
+               
             </td>
         
-        <td style="width: 35%;">
-                <div class="sig-line"></div>
-                <strong>ELABORADO POR</strong><br>
-                <span style="font-size: 8.5pt; font-family: sans-serif;">{{ $movimiento->nom_usuario ?? 'Operador SIRE' }}</span>
-            </td>
+       <!-- 
+<td style="width: 35%;">
+    <div class="sig-line"></div>
+    <strong>ELABORADO POR</strong><br>
+    <span style="font-size: 8.5pt; font-family: sans-serif;">{{ $movimiento->nom_usuario ?? 'Operador SIRE' }}</span>
+</td> 
+-->
             
-           
 
-            <td style="width: 35%;">
+            <td style="width: 35%; padding-top: 80px;">
                 <div class="sig-line"></div>
                 <strong>{{ $registradorActual?->titulo_profesional ?? 'Registrador de la Propiedad' }}. {{ $registradorActual?->nombre_completo ?? 'REGISTRADOR NO ASIGNADO' }}</strong><br>
-                <span style="font-size: 8.5pt; font-family: sans-serif;">Firma Autorizada</span>
+                <span style="font-size: 8.5pt; font-family: sans-serif;">Registrador(a) de la Propiedad y Mercantil (E) </span>
             </td>
         </tr>
     </table>
 </div>
 
     <div class="footer-acta">
-        Asiento Registral Digital generado por SIRE (Sistema de Información Registral).
+        Documento generado por el operador: {{ $movimiento->nom_usuario ?? 'SISTEMA' }}. Verifique la validez en la plataforma SIRE.
     </div>
+    
 
 {{-- PIE DE PÁGINA DINÁMICO CON NUMERACIÓN (Página X de Y) --}}
     <script type="text/php">

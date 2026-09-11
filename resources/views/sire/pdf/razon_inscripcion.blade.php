@@ -179,15 +179,17 @@
                 <div class="header-subtitle">{{ $configuracion->direccion ?? 'Sevilla don Bosco, Ecuador' }}</div>
             </td>
             <td class="doc-type" style="width: 30%; vertical-align: middle; text-align: right;">
-                RAZÓN DE INSCRIPCIÓN<br>
-                <span style="font-size: 8.5pt; color: #dc2626;">N° INS-{{ $movimiento->movinumins }}</span>
+                @if(!empty($qrBase64))
+                    <img src="data:image/png;base64,{{ $qrBase64 }}" style="width: 100px; height: 100px; display: inline-block;">
+                @endif
+                
             </td>
         </tr>
     </table>
 </div>
 
     <div class="title-banner">
-        <h1>RAZÓN DE INSCRIPCIÓN DE MOVIMIENTO REGISTRAL</h1>
+        <h1>RAZÓN DE INSCRIPCIÓN</h1>
         <p>Documento oficial generado automáticamente por el Sistema SIRE</p>
     </div>
 
@@ -274,7 +276,7 @@
 </div>
 
     <div class="footer-note">
-        Documento generado por el operador: {{ $movimiento->nom_usuario ?? 'SISTEMA' }} — Documento firmado electrónicamente. Verifique la validez en la plataforma SIRE.
+        Documento generado por el operador: {{ $movimiento->nom_usuario ?? 'SISTEMA' }}, Verifique la validez en la plataforma SIRE.
     </div>
 {{-- PIE DE PÁGINA DINÁMICO CON NUMERACIÓN (Página X de Y) --}}
     <script type="text/php">
