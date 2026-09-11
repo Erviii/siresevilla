@@ -304,7 +304,8 @@
             <strong>{{ $index + 1 }}.- ACTO: {{ $fila->tipo_acto }}</strong> 
             <span style="float: right;">
                 <strong>Ins:</strong> N° {{ $fila->num_inscripcion }} &nbsp;|&nbsp;
-                <strong>Rep:</strong> N° {{ $fila->num_repertorio }} &nbsp;|&nbsp;   
+                <strong>Rep:</strong> N° {{ $fila->num_repertorio }} &nbsp;|&nbsp;  
+                <strong>tom:</strong> N° {{ $fila->num_tomo }} &nbsp;|&nbsp; 
                 <strong>Fecha:</strong> {{ \Carbon\Carbon::parse($fila->fecha_inscripcion)->format('d/m/Y') }}
             </span>
         </div>
@@ -315,17 +316,35 @@
     <div class="mov-label">Intervinientes:</div>
     <div class="mov-data">
         @if(!empty($fila->clientes_json))
-            <table class="tabla-intervinientes">
-                @foreach(json_decode($fila->clientes_json) as $cliente)
+    @php
+        // Decodificamos el JSON
+        $clientesArray = json_decode($fila->clientes_json) ?: [];
+        
+        // Convertimos a colección y agrupamos por 'papel'
+        $clientesAgrupados = collect($clientesArray)->groupBy('papel');
+    @endphp
+
+    @if(count($clientesArray) > 0)
+        <table class="tabla-intervinientes">
+            
+            {{-- Recorremos cada grupo de papeles (ej: todos los vendedores, luego todos los compradores) --}}
+            @foreach($clientesAgrupados as $papel => $grupoClientes)
+                
+                {{-- Recorremos a los clientes dentro de ese grupo específico --}}
+                @foreach($grupoClientes as $cliente)
                     <tr>
-                        <td class="col-papel"><b>{{ $cliente->papel }}:</b></td>
-                        <td class="col-nombre">{{ $cliente->nombre }}</td>
-                        <td class="col-cedula"><b>C.I/RUC:</b> {{ $cliente->cedula }}</td>
-                        <td class="col-est-civil"><b>EST. CIVIL:</b> {{ $cliente->est_civil }}</td>
+                        <td class="col-papel"><b>{{ $cliente->papel ?? '' }}:</b></td>
+                        <td class="col-nombre">{{ $cliente->nombre ?? 'Sin nombre' }}</td>
+                        <td class="col-cedula"><b>C.I/RUC:</b> {{ $cliente->cedula ?? 'N/A' }}</td>
+                        <td class="col-est-civil"><b>EST. CIVIL:</b> {{ $cliente->est_civil ?? '' }}</td>
                     </tr>
                 @endforeach
-            </table>
-        @endif
+                
+            @endforeach
+            
+        </table>
+    @endif
+@endif
     </div>
     <div class="clearfix"></div>
 </div>
