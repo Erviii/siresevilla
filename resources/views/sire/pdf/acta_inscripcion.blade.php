@@ -249,7 +249,8 @@
 
     <div class="section-title">1. OBSERVACIONES</div>
     <p class="narrative">
-        {{ $movimiento->moviobserv ?? 'Sin observaciones adicionadas.' }}
+        
+         {!! nl2br(e($movimiento->moviobserv ?? 'Sin observaciones adicionadas.' )) !!}
     </p>
 
  <div class="section-title">2. DESCRIPCIÓN Y LINDEROS DEL INMUEBLE</div>
