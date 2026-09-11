@@ -198,20 +198,28 @@
         <tr>
             <td class="label">Nro. Repertorio:</td>
             <td class="value">{{ $movimiento->movinumrep }}</td>
-            <td class="label">Fecha Inscripción:</td>
-            <td class="value">{{ date('d/m/Y H:i', strtotime($movimiento->movifecins)) }}</td>
+            <td class="label">Nro. Tomo</td>
+            <td class="value">{{ $movimiento->movinumtom }}</td>
+            
         </tr>
         <tr>
             <td class="label">Nro. Inscripción:</td>
             <td class="value">{{ $movimiento->movinumins }}</td>
-            <td class="label">Libro Registral:</td>
-            <td class="value">{{ $movimiento->librnombre }}</td>
+            <td class="label">Fecha Inscripción:</td>
+            <td class="value">{{ date('d/m/Y H:i', strtotime($movimiento->movifecins)) }}</td>
+            
         </tr>
         <tr>
             <td class="label">Ficha N°:</td>
             <td class="value">SDB-{{ $fichaRef->reffnumfic ?? 'S/N' }}</td>
             <td class="label">Canton / Juzgado:</td>
             <td class="value">{{ $movimiento->cantnombre ?? 'N/A' }} / {{ $movimiento->junonombre ?? 'N/A' }}</td>
+        </tr>
+        <tr>
+            <td class="label">Libro Registral:</td>
+            <td class="value">{{ $movimiento->librnombre }}</td>
+             <td class="label"></td>
+            <td class="value"></td>
         </tr>
     </table>
 
@@ -249,8 +257,30 @@
 
     <div class="section-title">4. CERTIFICACIÓN REGISTRAL Y OBSERVACIONES</div>
     <div class="legal-text">
-        El Registrador de la Propiedad certifica que en esta fecha queda legalmente inscrita la correspondiente documentación relativa al acto <strong>{{ $movimiento->actonombre }}</strong> en el libro registral <strong>{{ $movimiento->librnombre }}</strong>, habiendo cumplido con todos los requisitos legales y reglamentarios vigentes en la materia.<br><br>
-        <strong>Observaciones:</strong> {{ $movimiento->moviobserv ?? 'Sin observaciones adicionadas.' }}
+      
+        <strong>Observaciones:</strong> 
+        
+<div class="linderos" style="text-align: justify; line-height: 1.5; font-size: 9.5pt;">
+    @php
+        $textoLinderos = $fichaRef->fichlinreg ?? 'No registra linderos.';
+        
+        if ($textoLinderos !== 'No registra linderos.') {
+            // 1. Escapamos por seguridad
+            $textoLinderos = e($textoLinderos);
+            
+            // 2. Eliminamos todo desde NORTE, SUR, ESTE u OESTE hasta llegar a AREA TOTAL.
+            // La letra 's' al final de la expresión permite que el punto (.) incluya saltos de línea.
+            $textoLinderos = preg_replace('/(?:NORTE|SUR|ESTE|OESTE).*?(?=(?:Á|A)REA\s+TOTAL|$)/is', '', $textoLinderos);
+            
+            // 3. (Opcional pero recomendado) Le damos un salto de línea y negrita solo a AREA TOTAL para que se vea bien
+            $textoLinderos = preg_replace('/((?:Á|A)REA\s+TOTAL\s*[:\.\-]*)/i', '<br><b>$1</b> ', $textoLinderos);
+        }
+    @endphp
+    
+    {!! $textoLinderos !!}
+</div>
+        
+        
     </div>
 
     <div class="signature-block">
