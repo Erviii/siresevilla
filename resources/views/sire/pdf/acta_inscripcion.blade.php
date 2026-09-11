@@ -6,8 +6,10 @@
     <style>
         @page {
             size: A4;
-            margin: 10mm 15mm 20mm 15mm;
+            /* IMPORTANTE: Aumenté el margen superior de 10mm a 35mm para darle espacio al encabezado */
+            margin: 40mm 15mm 20mm 15mm;
         }
+        
         body {
             font-family: 'Times New Roman', Times, serif;
             font-size: 11pt;
@@ -15,12 +17,21 @@
             color: #0f172a;
         }
 
-        /* Encabezado */
+        /* Encabezado Fijo */
+        .header-fijo {
+            position: fixed;
+            /* Sube exactamente la misma cantidad que le dimos al margen superior (35mm) */
+            top: -35mm; 
+            left: 0px;
+            right: 0px;
+            height: 30mm;
+        }
+
         .header {
             width: 100%;
             border-bottom: 2px solid #1e3a8a;
             padding-bottom: 8px;
-            margin-bottom: 15px;
+            /* Quitamos el margin-bottom porque el espacio ya lo da el @page */
         }
         .header table {
             width: 100%;
@@ -45,310 +56,159 @@
             color: #0f172a;
         }
 
-         .title-banner {
-            background-color: #f1f5f9;
-            border-left: 4px solid #1e3a8a;
-            padding: 8px 12px;
-            margin-bottom: 15px;
-        }
-        .title-banner h1 {
-            font-size: 11pt;
-            margin: 0;
-            color: #0f172a;
-            text-transform: uppercase;
-        }
-        .title-banner p {
-            margin: 2px 0 0 0;
-            font-size: 8pt;
-            color: #64748b;
-        }
-
-        .meta-box {
-            width: 100%;
-            border: 1px solid #0f172a;
-            margin-bottom: 18px;
-            border-collapse: collapse;
-        }
-        .meta-box td {
-            padding: 5px 8px;
-            font-size: 9.5pt;
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-        }
-        .meta-box .lbl {
-            font-weight: bold;
-            background-color: #f1f5f9;
-            width: 30%;
-            border-right: 1px solid #0f172a;
-            border-bottom: 1px solid #cbd5e1;
-        }
-        .meta-box .val {
-            border-bottom: 1px solid #cbd5e1;
-        }
-
-         .grid-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 10px;
-        }
-        .grid-table td {
-            padding: 5px 8px;
-            font-size: 8.5pt;
-            vertical-align: top;
-            border: 1px solid #e2e8f0;
-        }
-        .grid-table .label {
-            font-weight: bold;
-            color: #334155;
-            width: 22%;
-            background-color: #f8fafc;
-        }
-        .grid-table .value {
-            color: #0f172a;
-            width: 28%;
-        }
- /* Secciones y Tablas */
-        .section-title {
-            font-size: 9pt;
-            font-weight: bold;
-            color: #1e3a8a;
-            text-transform: uppercase;
-            border-bottom: 1px solid #cbd5e1;
-            padding-bottom: 3px;
-            margin-top: 14px;
-            margin-bottom: 8px;
-        }
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 6px;
-            margin-bottom: 10px;
-        }
-        .data-table th {
-            background-color: #1e3a8a;
-            color: #ffffff;
-            font-size: 8pt;
-            font-weight: bold;
-            text-transform: uppercase;
-            padding: 5px 8px;
-            text-align: left;
-            border: 1px solid #1e3a8a;
-        }
-        .data-table td {
-            padding: 5px 8px;
-            font-size: 8.5pt;
-            border: 1px solid #e2e8f0;
-        }
-
-        p.narrative {
-            text-align: justify;
-            text-indent: 25px;
-            margin-bottom: 10px;
-            margin-top: 0;
-        }
-
-        .section-h {
-            font-weight: bold;
-            font-size: 10pt;
-            margin-top: 14px;
-            margin-bottom: 4px;
-            text-transform: uppercase;
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            border-bottom: 1px solid #cbd5e1;
-            padding-bottom: 2px;
-        }
-
-        .property-desc {
-            background-color: #fafafa;
-            border: 1px solid #e2e8f0;
-            padding: 8px 12px;
-            margin: 8px 0 14px 0;
-            font-size: 9.5pt;
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            text-align: justify;
-        }
-
-        .signature-section {
-            margin-top: 45px;
-            page-break-inside: avoid;
-        }
-        .sig-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .sig-table td {
-            width: 50%;
-            text-align: center;
-            vertical-align: top;
-            padding: 10px;
-        }
-        .sig-line {
-            border-top: 1px solid #0f172a;
-            width: 80%;
-            margin: 0 auto 4px auto;
-        }
-
-        .footer-acta {
-            margin-top: 30px;
-            font-size: 7.5pt;
-            color: #64748b;
-            text-align: center;
-            font-family: sans-serif;
-        }
+        /* Resto de tus estilos... */
+        .title-banner { background-color: #f1f5f9; border-left: 4px solid #1e3a8a; padding: 8px 12px; margin-bottom: 15px; }
+        .title-banner h1 { font-size: 11pt; margin: 0; color: #0f172a; text-transform: uppercase; }
+        .title-banner p { margin: 2px 0 0 0; font-size: 8pt; color: #64748b; }
+        .grid-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+        .grid-table td { padding: 5px 8px; font-size: 8.5pt; vertical-align: top; border: 1px solid #e2e8f0; }
+        .grid-table .label { font-weight: bold; color: #334155; width: 22%; background-color: #f8fafc; }
+        .grid-table .value { color: #0f172a; width: 28%; }
+        .section-title { font-size: 9pt; font-weight: bold; color: #1e3a8a; text-transform: uppercase; border-bottom: 1px solid #cbd5e1; padding-bottom: 3px; margin-top: 14px; margin-bottom: 8px; }
+        p.narrative { text-align: justify; text-indent: 25px; margin-bottom: 10px; margin-top: 0; }
+        .property-desc { background-color: #fafafa; border: 1px solid #e2e8f0; padding: 8px 12px; margin: 8px 0 14px 0; font-size: 9.5pt; text-align: justify; }
+        .signature-section { margin-top: 45px; page-break-inside: avoid; }
+        .sig-table { width: 100%; border-collapse: collapse; }
+        .sig-table td { width: 50%; text-align: center; vertical-align: top; padding: 10px; }
+        .sig-line { border-top: 1px solid #0f172a; width: 80%; margin: 0 auto 4px auto; }
+        .footer-acta { margin-top: 30px; font-size: 7.5pt; color: #64748b; text-align: center; font-family: sans-serif; }
     </style>
 </head>
 <body>
 
-     <div class="header">
-    <table>
-        <tr>
-            <td style="width: 20%; vertical-align: middle;">
-                <img src="{{ public_path('images/logosevilla.png') }}" style="width: 85px; height: auto; display: block;">
-            </td>
-            <td style="width: 50%; vertical-align: middle;">
-                <div class="header-title"><strong>{{ $configuracion->nombre_registro ?? 'REGISTRO DE LA PROPIEDAD Y MERCANTIL' }}</strong></div>
-                <div class="header-subtitle">{{ $configuracion->direccion ?? 'Sevilla don Bosco, Ecuador' }}</div>
-            </td>
-            <td class="doc-type" style="width: 30%; vertical-align: middle; text-align: right;">
-                @if(!empty($qrBase64))
-                    <img src="data:image/png;base64,{{ $qrBase64 }}" style="width: 90px; height: 90px; display: inline-block;">
-                @endif
-                
-            </td>
-        </tr>
-    </table>
-</div>
-   <div class="title-banner">
-        <h1>ACTA DE INSCRIPCIÓN</h1>
-        <p>Documento oficial generado automáticamente por el Sistema SIRE</p>
+    <!-- 1. AQUÍ APLICAMOS LA CLASE header-fijo -->
+    <div class="header header-fijo">
+        <table>
+            <tr>
+                <td style="width: 20%; vertical-align: middle;">
+                    <img src="{{ public_path('images/logosevilla.png') }}" style="width: 85px; height: auto; display: block;">
+                </td>
+                <td style="width: 50%; vertical-align: middle;">
+                    <div class="header-title"><strong>{{ $configuracion->nombre_registro ?? 'REGISTRO DE LA PROPIEDAD Y MERCANTIL' }}</strong></div>
+                    <div class="header-subtitle">{{ $configuracion->direccion ?? 'Sevilla don Bosco, Ecuador' }}</div>
+                </td>
+                <td class="doc-type" style="width: 30%; vertical-align: middle; text-align: right;">
+                    @if(!empty($qrBase64))
+                        <img src="data:image/png;base64,{{ $qrBase64 }}" style="width: 90px; height: 90px; display: inline-block;">
+                    @endif
+                </td>
+            </tr>
+        </table>
     </div>
 
-    <table class="grid-table">
-        <tr>
-            <td class="label">Numero. Repertorio:</td>
-            <td class="value">{{ $movimiento->movinumrep }}</td>
-            <td class="label">Fecha Inscripción:</td>
-            <td class="value">{{ date('d/m/Y', strtotime($movimiento->movifecins)) }}</td>
-        </tr>
-        <tr>
-            <td class="label">Numero. Inscripción:</td>
-            <td class="value">{{ $movimiento->movinumins }}</td>
-            <td class="label">Numero. Tomo</td>
-            <td class="value">{{ $movimiento->movinumtom }}</td>
-        </tr>
-        <tr>
-            <td class="label">Ficha N°:</td>
-            <td class="value">SDB-{{ $fichaRef->reffnumfic ?? 'S/N' }}</td>
-            <td class="label">Naturaleza del Acto</td>
-            <td class="value">{{ $movimiento->actonombre }}</td>
-        </tr>
-    </table>
+    <!-- 2. ENVOLVEMOS EL CONTENIDO EN UNA ETIQUETA <main> -->
+    <main>
+        <div class="title-banner">
+            <h1>ACTA DE INSCRIPCIÓN</h1>
+            <p>Documento oficial generado automáticamente por el Sistema SIRE</p>
+        </div>
 
-    <p class="narrative">
-        En el Cantón {{ $movimiento->cantnombre ?? 'Central' }}, el {{ date('d', strtotime($movimiento->movifecins)) }} de {{ ucfirst(\Carbon\Carbon::parse($movimiento->movifecins)->locale('es')->translatedFormat('F')) }} del año {{ date('Y', strtotime($movimiento->movifecins)) }}, se procedió a inscribir en el <strong>LIBRO {{ $movimiento->librnombre }}</strong> el acto registral formalizado mediante el Sistema Registral signado mediante el número de repertorio <strong>{{ $movimiento->movinumrep }}</strong>, número de tomo <strong>{{ $movimiento->movinumtom }}</strong>  y la inscripción número <strong>{{ $movimiento->movinumins }}</strong>.
-    </p>
+        <table class="grid-table">
+            <tr>
+                <td class="label">Numero. Repertorio:</td>
+                <td class="value">{{ $movimiento->movinumrep }}</td>
+                <td class="label">Fecha Inscripción:</td>
+                <td class="value">{{ date('d/m/Y', strtotime($movimiento->movifecins)) }}</td>
+            </tr>
+            <tr>
+                <td class="label">Numero. Inscripción:</td>
+                <td class="value">{{ $movimiento->movinumins }}</td>
+                <td class="label">Numero. Tomo</td>
+                <td class="value">{{ $movimiento->movinumtom }}</td>
+            </tr>
+            <tr>
+                <td class="label">Ficha N°:</td>
+                <td class="value">SDB-{{ $fichaRef->reffnumfic ?? 'S/N' }}</td>
+                <td class="label">Naturaleza del Acto</td>
+                <td class="value">{{ $movimiento->actonombre }}</td>
+            </tr>
+        </table>
 
-    <div class="section-title">1. OBSERVACIONES</div>
-    <p class="narrative">
-        
-         {!! nl2br(e($movimiento->moviobserv ?? 'Sin observaciones adicionadas.' )) !!}
-    </p>
+        <p class="narrative">
+            En el Cantón {{ $movimiento->cantnombre ?? 'Central' }}, el {{ date('d', strtotime($movimiento->movifecins)) }} de {{ ucfirst(\Carbon\Carbon::parse($movimiento->movifecins)->locale('es')->translatedFormat('F')) }} del año {{ date('Y', strtotime($movimiento->movifecins)) }}, se procedió a inscribir en el <strong>LIBRO {{ $movimiento->librnombre }}</strong> el acto registral formalizado mediante el Sistema Registral signado mediante el número de repertorio <strong>{{ $movimiento->movinumrep }}</strong>, número de tomo <strong>{{ $movimiento->movinumtom }}</strong>  y la inscripción número <strong>{{ $movimiento->movinumins }}</strong>.
+        </p>
 
- <div class="section-title">2. DESCRIPCIÓN Y LINDEROS DEL INMUEBLE</div>
-<div class="property-desc">
-    <div style="margin-bottom: 6px;">
-        
-        <strong>Clave Catastral:</strong> {{ $fichaRef->fichcodigo ?? 'N/A' }} <br>
-        <strong>Ubicación:</strong> {{ $fichaRef->fichparroq ?? $movimiento->cantnombre ?? 'N/A' }}
-    </div>
+        <div class="section-title">1. OBSERVACIONES</div>
+        <p class="narrative">
+             {!! nl2br(e($movimiento->moviobserv ?? 'Sin observaciones adicionadas.' )) !!}
+        </p>
 
-    <div class="section-title" style="font-weight: bold; font-size: 9.5pt; text-transform: uppercase; border-bottom: 1px solid #cbd5e1; margin-top: 8px; margin-bottom: 4px;">
-        LINDEROS REGISTRALES
-    </div>
+        <div class="section-title">2. DESCRIPCIÓN Y LINDEROS DEL INMUEBLE</div>
+        <div class="property-desc">
+            <div style="margin-bottom: 6px;">
+                <strong>Clave Catastral:</strong> {{ $fichaRef->fichcodigo ?? 'N/A' }} <br>
+                <strong>Ubicación:</strong> {{ $fichaRef->fichparroq ?? $movimiento->cantnombre ?? 'N/A' }}
+            </div>
 
-    <div class="linderos" style="text-align: justify; line-height: 1.5; font-size: 9.5pt;">
-        @php
-            // 1. Obtenemos el texto de la columna exacta 'fichlinreg'
-            $textoLinderos = $fichaRef->fichlinreg ?? 'No registra linderos.';
-            
-            // 2. Formateamos los puntos cardinales y el área
-            if ($textoLinderos !== 'No registra linderos.') {
-                $textoLinderos = preg_replace(
-                    '/(NORTE[\.\-]*|SUR[\.\-]*|ESTE[\.\-]*|OESTE[\.\-]*|Área total:)/i', 
-                    '<br><b>$1</b> ', 
-                    $textoLinderos
-                );
-            }
-        @endphp
-        
-        {!! $textoLinderos !!}
-    </div>
-</div>
+            <div class="section-title" style="font-weight: bold; font-size: 9.5pt; text-transform: uppercase; border-bottom: 1px solid #cbd5e1; margin-top: 8px; margin-bottom: 4px;">
+                LINDEROS REGISTRALES
+            </div>
 
-    <div class="section-title">3. INTERVINIENTES Y COMPARECIENTES</div>
-    <p class="narrative">
-        Comparecen al presente asiento registral las siguientes personas:
-    </p>
-    <ul>
-        @forelse($intervinientes as $persona)
-            <li style="font-size: 10pt; font-family: sans-serif; margin-bottom: 3px;">
-                <strong>{{ $persona->clienombre }}</strong> con numero de identificacion <code>{{ $persona->cliecedruc }}</code> y en calidad de: <strong>{{ $persona->papenombre ?? 'INTERVINIENTE' }}</strong>.
-            </li>
-        @empty
-            <li style="font-size: 10pt; font-family: sans-serif;">Sin intervinientes detallados.</li>
-        @endforelse
-    </ul>
+            <div class="linderos" style="text-align: justify; line-height: 1.5; font-size: 9.5pt;">
+                @php
+                    $textoLinderos = $fichaRef->fichlinreg ?? 'No registra linderos.';
+                    if ($textoLinderos !== 'No registra linderos.') {
+                        $textoLinderos = preg_replace(
+                            '/(NORTE[\.\-]*|SUR[\.\-]*|ESTE[\.\-]*|OESTE[\.\-]*|Área total:)/i', 
+                            '<br><b>$1</b> ', 
+                            $textoLinderos
+                        );
+                    }
+                @endphp
+                {!! $textoLinderos !!}
+            </div>
+        </div>
 
-    <p class="narrative">
-        Con lo cual queda formalizado y concluido el presente asiento en el Libro Registro correspondiente, firmando los funcionarios responsables para constancia de lo actuado.
-    </p>
+        <div class="section-title">3. INTERVINIENTES Y COMPARECIENTES</div>
+        <p class="narrative">
+            Comparecen al presente asiento registral las siguientes personas:
+        </p>
+        <ul>
+            @forelse($intervinientes as $persona)
+                <li style="font-size: 10pt; font-family: sans-serif; margin-bottom: 3px;">
+                    <strong>{{ $persona->clienombre }}</strong> con numero de identificacion <code>{{ $persona->cliecedruc }}</code> y en calidad de: <strong>{{ $persona->papenombre ?? 'INTERVINIENTE' }}</strong>.
+                </li>
+            @empty
+                <li style="font-size: 10pt; font-family: sans-serif;">Sin intervinientes detallados.</li>
+            @endforelse
+        </ul>
 
-   <div class="signature-section">
-    <table class="sig-table">
-        <tr>
-            
-         {{-- Código QR centrado --}}
-            <td style="width: 30%; text-align: center;">
-                @if(!empty($qrBase64))
-                    <img src="data:image/png;base64,{{ $qrBase64 }}" style="width: 90px; height: 90px; display: inline-block;">
-            <div style="font-size: 7.5pt; color: #64748b; margin-top: 2px;">Validación SIRE</div>    
-                @endif
-               
-            </td>
-        
-       <!-- 
-<td style="width: 35%;">
-    <div class="sig-line"></div>
-    <strong>ELABORADO POR</strong><br>
-    <span style="font-size: 8.5pt; font-family: sans-serif;">{{ $movimiento->nom_usuario ?? 'Operador SIRE' }}</span>
-</td> 
--->
-            
+        <p class="narrative">
+            Con lo cual queda formalizado y concluido el presente asiento en el Libro Registro correspondiente, firmando los funcionarios responsables para constancia de lo actuado.
+        </p>
 
-            <td style="width: 35%; padding-top: 80px;">
-                <div class="sig-line"></div>
-                <strong>{{ $registradorActual?->titulo_profesional ?? 'Registrador de la Propiedad' }}. {{ $registradorActual?->nombre_completo ?? 'REGISTRADOR NO ASIGNADO' }}</strong><br>
-                <span style="font-size: 8.5pt; font-family: sans-serif;">Registrador(a) de la Propiedad y Mercantil (E) </span>
-            </td>
-        </tr>
-    </table>
-</div>
+        <div class="signature-section">
+            <table class="sig-table">
+                <tr>
+                    <td style="width: 30%; text-align: center;">
+                        @if(!empty($qrBase64))
+                            <img src="data:image/png;base64,{{ $qrBase64 }}" style="width: 90px; height: 90px; display: inline-block;">
+                            <div style="font-size: 7.5pt; color: #64748b; margin-top: 2px;">Validación SIRE</div>    
+                        @endif
+                    </td>
+                    <td style="width: 35%; padding-top: 80px;">
+                        <div class="sig-line"></div>
+                        <strong>{{ $registradorActual?->titulo_profesional ?? 'Registrador de la Propiedad' }}. {{ $registradorActual?->nombre_completo ?? 'REGISTRADOR NO ASIGNADO' }}</strong><br>
+                        <span style="font-size: 8.5pt; font-family: sans-serif;">Registrador(a) de la Propiedad y Mercantil (E) </span>
+                    </td>
+                </tr>
+            </table>
+        </div>
 
-    <div class="footer-acta">
-        Documento generado por el operador: {{ $movimiento->nom_usuario ?? 'SISTEMA' }}. Verifique la validez en la plataforma SIRE.
-    </div>
-    
+        <div class="footer-acta">
+            Documento generado por el operador: {{ $movimiento->nom_usuario ?? 'SISTEMA' }}. Verifique la validez en la plataforma SIRE.
+        </div>
+    </main>
 
-{{-- PIE DE PÁGINA DINÁMICO CON NUMERACIÓN (Página X de Y) --}}
+    {{-- PIE DE PÁGINA DINÁMICO CON NUMERACIÓN --}}
     <script type="text/php">
         if (isset($pdf)) {
             $font = $fontMetrics->get_font("Helvetica", "normal");
             $size = 8;
-            // Posición X e Y en la página A4 (puntos)
             $x = 260; 
             $y = 810; 
             $text = "Página {PAGE_NUM} de {PAGE_COUNT}";
-            $color = array(0.39, 0.45, 0.55); // Color gris slate (#64748b)
-            
+            $color = array(0.39, 0.45, 0.55);
             $pdf->page_text($x, $y, $text, $font, $size, $color);
         }
     </script>
