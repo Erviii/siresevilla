@@ -158,7 +158,7 @@
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label fw-semibold text-secondary small d-none d-md-block">Identificación</label>
-                                <input type="text" name="cedulas[]" class="form-control" placeholder="Cédula o RUC" maxlength="10" required>
+                                <input type="text" name="cedulas[]" class="form-control" placeholder="Cédula o RUC" maxlength="16" required>
                             </div>
                             <div class="col-md-5">
                                 <label class="form-label fw-semibold text-secondary small d-none d-md-block">Nombres Completos</label>
