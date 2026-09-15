@@ -300,6 +300,7 @@
                 <div class="signature-line"></div>
                 <div class="signer-name">{{ $registradorActual?->titulo_profesional ?? 'Registrador de la Propiedad' }}. {{ $registradorActual?->nombre_completo ?? 'REGISTRADOR NO ASIGNADO' }}</div>
                 <div class="signer-title">Registrador(a) de la Propiedad y Mercantil (E) </div>
+                <div class="signer-title">Canton Sevilla Don Bosco</div>
             </td>
         </tr>
     </table>

@@ -125,7 +125,7 @@
         </table>
 
         <p class="narrative">
-            En el Cantón {{ $movimiento->cantnombre ?? 'Central' }}, el {{ date('d', strtotime($movimiento->movifecins)) }} de {{ ucfirst(\Carbon\Carbon::parse($movimiento->movifecins)->locale('es')->translatedFormat('F')) }} del año {{ date('Y', strtotime($movimiento->movifecins)) }}, se procedió a inscribir en el <strong>LIBRO {{ $movimiento->librnombre }}</strong> el acto registral formalizado mediante el Sistema Registral signado mediante el número de repertorio <strong>{{ $movimiento->movinumrep }}</strong>, número de tomo <strong>{{ $movimiento->movinumtom }}</strong>  y la inscripción número <strong>{{ $movimiento->movinumins }}</strong>.
+            En el Cantón Sevilla Don Bosco, el {{ date('d', strtotime($movimiento->movifecins)) }} de {{ ucfirst(\Carbon\Carbon::parse($movimiento->movifecins)->locale('es')->translatedFormat('F')) }} del año {{ date('Y', strtotime($movimiento->movifecins)) }}, se procedió a inscribir en el <strong>LIBRO {{ $movimiento->librnombre }}</strong> La escritura publica formalizado mediante el Sistema Registral signado mediante el número de repertorio <strong>{{ $movimiento->movinumrep }}</strong>, número de tomo <strong>{{ $movimiento->movinumtom }}</strong>  y la inscripción número <strong>{{ $movimiento->movinumins }}</strong>.
         </p>
 
         <div class="section-title">1. OBSERVACIONES</div>
@@ -190,6 +190,7 @@
                         <div class="sig-line"></div>
                         <strong>{{ $registradorActual?->titulo_profesional ?? 'Registrador de la Propiedad' }}. {{ $registradorActual?->nombre_completo ?? 'REGISTRADOR NO ASIGNADO' }}</strong><br>
                         <span style="font-size: 8.5pt; font-family: sans-serif;">Registrador(a) de la Propiedad y Mercantil (E) </span>
+                        <span style="font-size: 8.5pt; font-family: sans-serif;">Canton Sevilla Don Bosco</span>
                     </td>
                 </tr>
             </table>
