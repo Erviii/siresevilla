@@ -70,7 +70,7 @@ public function storeMovimiento(Request $request)
             'movinumrep' => $request->num_rep,
             'movifecins' => $fechaInscripcion, 
             'movinumins' => $request->num_ins,
-            'movinumtom' => $request->num_tom,  // <-- Se agrega a sctncmovi
+            'movinumtom' => $request->num_tom,  
             'movicodact' => $request->cod_acto,
             'moviobserv' => $request->observacion,
             'movicodcan' => $request->cod_can,
@@ -86,7 +86,7 @@ public function storeMovimiento(Request $request)
             'reffnumrep' => $request->num_rep,
             'refffecins' => $fechaInscripcion,
             'reffnumins' => $request->num_ins,
-            'reffnumtom' => $request->num_tom,  // <-- Se agrega a sctndreff
+            'reffnumtom' => $request->num_tom,  
         ]);
         
         // 3. Sincronizar y Guardar Intervinientes (SCTNMCLIE y SCTNDCLMV)
@@ -94,29 +94,38 @@ public function storeMovimiento(Request $request)
         $cedulas = $request->input('cedulas');
         $nombres = $request->input('nombres');
         
+        // Arreglo para llevar el control de clientes procesados en este request y evitar duplicados
+        $clientesProcesados = []; 
+
         foreach ($cedulas as $index => $cedula) {
             $cedula     = trim($cedula);
             $tipoCli    = trim($roles[$index]);
             $nombre     = trim($nombres[$index] ?? 'CLIENTE NUEVO');
             $secuencial = 1; // Por defecto asignamos el secuencial 1
 
-            // A. Asegurar existencia en el catálogo maestro (sctnmclie)
-            $clienteExiste = DB::table('sctnmclie')
-                ->where('clietipcli', $tipoCli)
-                ->where('cliecedruc', $cedula)
-                ->where('clieseccli', $secuencial)
-                ->exists();
+            // Solo verificamos e insertamos en la maestra si no lo hemos procesado en este ciclo
+            if (!in_array($cedula, $clientesProcesados)) {
+                
+                // A. Asegurar existencia en el catálogo maestro (sctnmclie) BUSCANDO SOLO POR CÉDULA
+                $clienteExiste = DB::table('sctnmclie')
+                    ->where('cliecedruc', $cedula)
+                    ->where('clietipcli', 'S') //IDENTIFICA QUE YA HALLA SIDO AGREGADO POR NUESTRA BASE DE DATOS.PARA LOS REPORTES.
+                    ->exists();
 
-            if (!$clienteExiste) {
-                DB::table('sctnmclie')->insert([
-                    'clietipcli' => 'S', // ¿En tu sistema siempre es S u Ojo si deberia ser el tipo de Interviniente?
-                    'cliecedruc' => $cedula,
-                    'clieseccli' => $secuencial,
-                    'clienombre' => mb_strtoupper($nombre),
-                ]);
+                if (!$clienteExiste) {
+                    DB::table('sctnmclie')->insert([
+                        'clietipcli' => 'S', // Valor estándar para la tabla maestra
+                        'cliecedruc' => $cedula,
+                        'clieseccli' => $secuencial,
+                        'clienombre' => mb_strtoupper($nombre),
+                    ]);
+                }
+                
+                // Lo marcamos como procesado para que, si la misma persona tiene otro rol abajo, no intente volver a crearla
+                $clientesProcesados[] = $cedula;
             }
 
-            // B. Crear la relación en el detalle (sctndclmv)
+            // B. Crear la relación en el detalle (sctndclmv) - ESTO SÍ SE EJECUTA SIEMPRE
             DB::table('sctndclmv')->insert([
                 'clmvcodlib' => $request->cod_lib,
                 'clmvnumrep' => $request->num_rep,
@@ -125,7 +134,7 @@ public function storeMovimiento(Request $request)
                 'clmvtipcli' => 'S', 
                 'clmvcedruc' => $cedula,
                 'clmvseccli' => $secuencial,
-                'clmvcodtip' => $tipoCli,
+                'clmvcodtip' => $tipoCli, // Aquí guardamos el rol (COMPRADOR, VENDEDOR, etc.)
             ]);
         }
     });
