@@ -76,6 +76,8 @@ public function storeMovimiento(Request $request)
             'movicodcan' => $request->cod_can,
             'movicodjon' => $request->cod_jon,
             'movicodusu' => $codigoUsuario,
+            'tip_doc' => $request->tip_doc, // nuevo campo
+            'fec_doc' => $request->fec_doc, // Nuevo Campo
         ]);
         
         // 2. Vincular con la Ficha (sctndreff)

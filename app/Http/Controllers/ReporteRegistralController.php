@@ -32,6 +32,8 @@ class ReporteRegistralController extends Controller
                 'm.movinumtom',
                 'm.moviobserv',
                 'm.movicodusu',
+                'm.tip_doc',
+                'm.fec_doc',
                 'l.librnombre', 
                 'a.actonombre', 
                 'c.cantnombre', 

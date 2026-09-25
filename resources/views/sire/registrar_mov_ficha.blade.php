@@ -129,6 +129,18 @@
                         </div>
                     </div>
 
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold text-secondary">Tipo de documento:</label>
+                           <input type="text" name="tip_doc" class="form-control" required placeholder="Ej: Escritura Publica">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold text-secondary">Fecha:</label>
+                            <input type="date" name="fec_doc" class="form-control" value="{{ date('Y-m-d') }}" required>
+                        </div>
+                       
+                    </div>
+
                     <!-- 3. Observaciones / Nota Marginal -->
                     <h5 class="section-title mb-3 fs-5"><i class="bi bi-journal-text me-2"></i>3. Observaciones / Nota Marginal</h5>
                     <div class="row mb-4">
