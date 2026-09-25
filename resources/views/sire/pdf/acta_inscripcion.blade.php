@@ -124,9 +124,17 @@
             </tr>
         </table>
 
-        <p class="narrative">
-            En el Cantón Sevilla Don Bosco, el {{ date('d', strtotime($movimiento->movifecins)) }} de {{ ucfirst(\Carbon\Carbon::parse($movimiento->movifecins)->locale('es')->translatedFormat('F')) }} del año {{ date('Y', strtotime($movimiento->movifecins)) }}, se procedió a inscribir en el <strong>LIBRO {{ $movimiento->librnombre }}</strong> La {{ $movimiento->tip_doc }} de fecha {{ $movimiento->fec_doc }} correspondiente al acto {{ $movimiento->actonombre }} formalizado mediante el Sistema Registral signado mediante el número de repertorio <strong>{{ $movimiento->movinumrep }}</strong>, número de tomo <strong>{{ $movimiento->movinumtom }}</strong>  y la inscripción número <strong>{{ $movimiento->movinumins }}</strong>.
-        </p>
+       <p class="narrative">
+    En el Cantón Sevilla Don Bosco, el {{ date('d', strtotime($movimiento->movifecins)) }} de {{ ucfirst(\Carbon\Carbon::parse($movimiento->movifecins)->locale('es')->translatedFormat('F')) }} del año {{ date('Y', strtotime($movimiento->movifecins)) }}, se procedió a inscribir en el <strong>LIBRO {{ $movimiento->librnombre }}</strong>
+    
+    @if(filled($movimiento->tip_doc))
+        la {{ $movimiento->tip_doc }} de fecha {{ $movimiento->fec_doc }} correspondiente al acto
+    @else
+        el acto
+    @endif
+
+    {{ $movimiento->actonombre }} formalizado mediante el Sistema Registral signado mediante el número de repertorio <strong>{{ $movimiento->movinumrep }}</strong>, número de tomo <strong>{{ $movimiento->movinumtom }}</strong> y la inscripción número <strong>{{ $movimiento->movinumins }}</strong>.
+</p>
 
         <div class="section-title">1. OBSERVACIONES</div>
         <p class="narrative">
