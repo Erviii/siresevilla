@@ -290,6 +290,7 @@ private function getBaseQueryReporte()
             mov.MOVINUMINS AS num_inscripcion,
             mov.MOVIFECINS AS fecha_inscripcion,
             mov.MOVINUMTOM AS num_tomo,
+            mov.canton_notaria AS canton_notaria,
             act.ACTONOMBRE AS tipo_acto,
             lib.LIBRNOMBRE AS libro,
             can.CANTNOMBRE AS canton,

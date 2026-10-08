@@ -78,6 +78,7 @@ public function storeMovimiento(Request $request)
             'movicodusu' => $codigoUsuario,
             'tip_doc' => $request->tip_doc, // nuevo campo
             'fec_doc' => $request->fec_doc, // Nuevo Campo
+            'canton_notaria' => $request->canton_notaria,
         ]);
         
         // 2. Vincular con la Ficha (sctndreff)
@@ -103,6 +104,7 @@ public function storeMovimiento(Request $request)
             $cedula     = trim($cedula);
             $tipoCli    = trim($roles[$index]);
             $nombre     = trim($nombres[$index] ?? 'CLIENTE NUEVO');
+            $estadoCivil = $request->estados_civiles[$index];
             $secuencial = 1; // Por defecto asignamos el secuencial 1
 
             // Solo verificamos e insertamos en la maestra si no lo hemos procesado en este ciclo
@@ -137,6 +139,7 @@ public function storeMovimiento(Request $request)
                 'clmvcedruc' => $cedula,
                 'clmvseccli' => $secuencial,
                 'clmvcodtip' => $tipoCli, // Aquí guardamos el rol (COMPRADOR, VENDEDOR, etc.)
+                'clmvestciv' => $estadoCivil,
             ]);
         }
     });
@@ -167,11 +170,13 @@ public function preview(Request $request)
     $roles = $request->input('roles', []);
     $cedulas = $request->input('cedulas', []);
     $nombres = $request->input('nombres', []);
+    $estadoCivil = $request->input('estados_civiles', []);;
 
     $filasHtml = '';
     foreach ($roles as $index => $codTip) {
         $cedula = $cedulas[$index] ?? '';
         $nombre = $nombres[$index] ?? '';
+        $estado = $estadoCivil[$index] ?? '';
 
         $papelNombre = DB::table('sctnmpape')
             ->where('papecodtip', $codTip)
@@ -183,6 +188,7 @@ public function preview(Request $request)
             <td class='col-papel'><b>" . e($papelTexto) . ":</b></td>
             <td class='col-nombre'>" . e(trim($nombre)) . "</td>
             <td class='col-cedula'><b>C.I/RUC:</b> " . e(trim($cedula)) . "</td>
+            <td class='col-estado'><b>Estado:</b> " . e(trim($estado)) . "</td>
         </tr>";
     }
 

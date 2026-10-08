@@ -138,6 +138,11 @@
                             <label class="form-label fw-semibold text-secondary">Fecha:</label>
                             <input type="date" name="fec_doc" class="form-control" value="{{ date('Y-m-d') }}" required>
                         </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold text-secondary">Canton Notaria/Juzgado:</label>
+                             <input type="text" name="canton_notaria" class="form-control" required placeholder="Ej: Morona">
+                        </div>
                        
                     </div>
 
@@ -157,32 +162,49 @@
                         </button>
                     </h5>
                     
-                    <div id="contenedor-intervinientes" class="mb-4">
-                        <div class="row g-2 mb-2 align-items-end fila-interviniente">
-                            <div class="col-md-3">
-                                <label class="form-label fw-semibold text-secondary small d-none d-md-block">Rol</label>
-                                <select name="roles[]" class="form-select select-rol" required>
-                                    <option value="">Seleccione...</option>
-                                    @foreach($rolcliente as $rol)
-                                        <option value="{{ $rol->papecodtip }}">{{ $rol->papenombre }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label fw-semibold text-secondary small d-none d-md-block">Identificación</label>
-                                <input type="text" name="cedulas[]" class="form-control" placeholder="Cédula o RUC" maxlength="16" required>
-                            </div>
-                            <div class="col-md-5">
-                                <label class="form-label fw-semibold text-secondary small d-none d-md-block">Nombres Completos</label>
-                                <input type="text" name="nombres[]" class="form-control" placeholder="Nombres y Apellidos" required>
-                            </div>
-                            <div class="col-md-1">
-                                <button type="button" class="btn btn-outline-danger w-100" onclick="eliminarFila(this)" title="Eliminar fila">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                   <div id="contenedor-intervinientes" class="mb-4">
+    <div class="row g-2 mb-2 align-items-end fila-interviniente">
+        <div class="col-md-2">
+            <label class="form-label fw-semibold text-secondary small d-none d-md-block">Rol</label>
+            <select name="roles[]" class="form-select select-rol" required>
+                <option value="">Seleccione...</option>
+                @foreach($rolcliente as $rol)
+                    <option value="{{ $rol->papecodtip }}">{{ $rol->papenombre }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label fw-semibold text-secondary small d-none d-md-block">Identificación</label>
+            <input type="text" name="cedulas[]" class="form-control" placeholder="Cédula o RUC" maxlength="16" required>
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label fw-semibold text-secondary small d-none d-md-block">Nombres Completos</label>
+            <input type="text" name="nombres[]" class="form-control" placeholder="Nombres y Apellidos" required>
+        </div>
+
+        <!-- Nuevo campo: Estado Civil -->
+        <div class="col-md-3">
+            <label class="form-label fw-semibold text-secondary small d-none d-md-block">Estado Civil</label>
+            <select name="estados_civiles[]" class="form-select" required>
+                <option value="">Seleccione...</option>
+                <option value="SO">Soltero/a</option>
+                <option value="CA">Casado/a</option>
+                <option value="DI">Divorciado/a</option>
+                <option value="VI">Viudo/a</option>
+                <option value="CE">Unión de Hecho / Conviviente</option>
+                <option value="NI">No Informado</option>
+            </select>
+        </div>
+
+        <div class="col-md-1">
+            <button type="button" class="btn btn-outline-danger w-100" onclick="eliminarFila(this)" title="Eliminar fila">
+                <i class="bi bi-trash"></i>
+            </button>
+        </div>
+    </div>
+</div>
 
                     <hr class="my-4 text-muted opacity-25">
 

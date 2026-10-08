@@ -214,6 +214,27 @@
     padding-left: 8px;
 }
 
+.watermark {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-45deg);
+    font-size: 4rem;
+    font-weight: bold;
+    color: rgba(200, 0, 0, 0.2); /* Color rojo traslúcido */
+    white-space: nowrap;
+    pointer-events: none; /* Permite hacer clic a través de ella */
+    z-index: 9999;
+    user-select: none;
+}
+
+/* Si es un reporte para impresión o PDF */
+@media print {
+    .watermark {
+        color: rgba(0, 0, 0, 0.15);
+    }
+}
+
     </style>
 </head>
 <body>
@@ -253,7 +274,7 @@
   <footer>
     <table class="footer-table">
         <tr>
-            <td style="width: 30%;"></td>
+            <td style="width: 30%;">Impresa por: {{ Auth::user()->usuanombre ?? Auth::user()->uanombre ?? 'Operador Registral' }}</td>
             <td style="width: 40%; text-align: center; font-weight: bold; text-transform: uppercase;">
                 Registro de la Propiedad del Cantón Sevilla Don Bosco
             </td>
@@ -261,6 +282,12 @@
         </tr>
     </table>
 </footer>
+
+@cannot('autorizado_ficha')
+    <div class="watermark">
+        BORRADOR / NO AUTORIZADO
+    </div>
+@endcannot
 
     <div class="section-title" style="margin-top: 0;">INFORMACIÓN REGISTRAL</div>
     <table class="info-grid">
@@ -352,12 +379,12 @@
             <div class="mov-row">
                 <div class="mov-label">Oficina donde se guarda el Original:</div>
                 <div class="mov-data">
-                    {!! $fila->juzgado !!}
+                    {!! $fila->juzgado !!} - {!! $fila->canton_notaria !!}
                 </div>
                   <div class="clearfix"></div>
             </div>
             <div class="mov-row">
-                <div class="mov-label">Canton:</div>
+                <div class="mov-label">Canton Inscripcion:</div>
                 <div class="mov-data">
                     {!! $fila->canton !!}
                 </div>
@@ -439,7 +466,7 @@
         
         <div class="sig-box">
             {{ $registradorActual?->titulo_profesional ?? 'Registrador de la Propiedad' }}. {{ $registradorActual?->nombre_completo ?? 'REGISTRADOR NO ASIGNADO' }}<br>
-            <span style="font-size: 10px; color: #333;"><strong>EL REGISTRADOR DE LA PROPIEDAD Y MERCANTIL</strong></span><br>
+            <span style="font-size: 10px; color: #333;"><strong>REGISTRADOR/A DE LA PROPIEDAD Y MERCANTIL (E)</strong></span><br>
             <span style="font-size: 9px; color: #555;"><strong>Firma y Sello</strong></span>
         </div>
         
